@@ -152,17 +152,18 @@ body{transition:background-color .3s,color .3s}main{overflow:clip}button{color:i
 /* Barra de rolagem da página: amarela, fina, sem as setinhas das pontas.
    `scrollbar-width:thin` (Firefox) já não desenha botão; o ::-webkit-scrollbar-button
    é o que some com eles no Chrome. */
-html{scrollbar-width:thin;scrollbar-color:var(--yellow) transparent}
+/* Barra de rolagem da página. NÃO declarar scrollbar-width/scrollbar-color soltos:
+   do Chrome 121 em diante as propriedades padrão desligam todo o ::-webkit-scrollbar-*,
+   e aí o trilho e os botões nativos voltam. O @supports abaixo isola o Firefox. */
 ::-webkit-scrollbar{width:10px;height:10px;background:transparent}
-::-webkit-scrollbar-track,::-webkit-scrollbar-track-piece{background:transparent;border:0;box-shadow:none}
+::-webkit-scrollbar-track,::-webkit-scrollbar-track-piece,::-webkit-scrollbar-corner{background:transparent;border:0;box-shadow:none}
 ::-webkit-scrollbar-thumb{background:var(--yellow);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
 ::-webkit-scrollbar-thumb:hover{background:#e0ab00;background-clip:padding-box}
-::-webkit-scrollbar-button,
-::-webkit-scrollbar-button:start:decrement,
-::-webkit-scrollbar-button:end:increment,
-::-webkit-scrollbar-button:vertical,
-::-webkit-scrollbar-button:horizontal{display:none;width:0;height:0;background:transparent}
-::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-button{display:none;width:0;height:0;background:transparent}
+/* Firefox não implementa os pseudo-elementos, então só ele entra aqui. */
+@supports (scrollbar-width:thin) and (not selector(::-webkit-scrollbar)){
+  html{scrollbar-width:thin;scrollbar-color:var(--yellow) transparent}
+}
 
 /* CTA do WhatsApp: a seção inteira é amarela, então o select amarelo sumia no fundo
    e o popup nativo herdava a mesma cor. Vira um campo claro, com seta própria. */
