@@ -1,13 +1,33 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type PointerEvent } from 'react';
+import { BrandLogo } from './brand-logo';
+import { QuazzLogo } from './quazz-logo';
 
 const whatsapp = 'https://wa.me/5521999888061';
+const googleReview = 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x997fd9270884ef:0x4f13ae1597048f17!12e1?source=g.page.m._&laa=merchant-review-solicitation';
 const clients = [
   { name: 'Johan Veículos', image: '/logos/johan.jpg', handle: 'johan.veiculos', field: 'AUTOMOTIVO' },
   { name: 'El Hombre', image: '/logos/el-hombre.png', handle: 'barbearia_elhombre', field: 'BARBEARIA' },
   { name: 'Club Alfa', image: '/logos/club-alfa.png', handle: 'barbearia_clubalfa', field: 'BARBEARIA' },
   { name: 'Café da Vila', image: '/logos/cafe-da-vila.jpg', handle: 'cafedavila21', field: 'ALIMENTAÇÃO' },
+];
+const rail = [
+  { seg: 'BARBEARIA', metric: '2,93x', unit: 'mais visualizações no perfil', name: 'Barbearia Club Alfa', did: 'Começou do zero com a agência. Uma gravação vira vários conteúdos do mês.', note: 'De 19.442 para 56.983, aumento de 193%. A agência publicou 4x e alterna alcance e visualizações. A conferir na origem.', logo: '/logos/club-alfa.png', handle: 'barbearia_clubalfa' },
+  { seg: 'MODA MASCULINA', metric: '+1 milhão', unit: 'de visualizações em 60 dias', name: 'Bem Trajados', did: 'Reuniões de alinhamento e produção de conteúdo para a loja e para o perfil.', note: 'Crescimento orgânico, sem anúncios pagos, segundo o destaque de Resultados da agência.', logo: null, handle: 'bemtrajado2564' },
+  { seg: 'ALIMENTAÇÃO', metric: 'Do zero', unit: 'à presença completa', name: 'Café da Vila', did: 'Criação do Instagram, logo, identidade visual e mini site para a abertura.', note: 'Escopo declarado pela agência no post de 24/02/2026. Vila do João, Maré.', logo: '/logos/cafe-da-vila.jpg', handle: 'cafedavila21' },
+  { seg: 'BARBEARIA', metric: '2 anos', unit: 'de parceria contínua', name: 'Barbearia El Hombre', did: 'Planejamento, gravações e conteúdo acompanhando a rotina de várias unidades.', note: 'A agência relata crescimento no período. Os números publicados não isolam o efeito do marketing.', logo: '/logos/el-hombre.png', handle: 'barbearia_elhombre' },
+  { seg: 'BELEZA', metric: '37%', unit: 'do alcance veio de não seguidores', name: 'Noemy Almeida Lash', did: 'Captação de bastidores e roteiros sobre cuidado com a extensão de cílios.', note: '5 mil visualizações em uma semana, print de insights no destaque Resultados.', logo: null, handle: 'noemyralmeida_lash' },
+  { seg: 'ESTÚDIO DE BELEZA', metric: 'Antes e agora', unit: 'da presença digital', name: 'Beatriz Lima Beauty', did: 'Bio estratégica, Linktree, Google atualizado, identidade, destaques e posts fixados.', note: 'Reorganização publicada pela agência em 02/03/2026. Méier.', logo: null, handle: 'beatrizllimabeauty' },
+];
+const heroShots = [
+  { src: '/images/captacao-loja.jpg', width: 960, height: 1280, focus: '50% 34%', label: 'NA LOJA', alt: 'Integrante da Tudo Aqui gravando, com celular em estabilizador, uma funcionária na porta da loja do cliente', caption: 'Gravação em andamento na porta da loja do cliente' },
+  { src: '/images/bandeira-rua.jpg', width: 720, height: 1280, focus: '50% 60%', label: 'NA RUA', alt: 'Integrante da Tudo Aqui, de camisa da agência, acompanhando uma gravação na rua com bandeirinhas e uma bandeira do Brasil', caption: 'Produção na rua, com a equipe em campo' },
+  { src: '/images/estudio-gravacao.jpg', width: 960, height: 1280, focus: '50% 55%', label: 'NO ESTÚDIO', alt: 'Gravação em estúdio: cliente sentada diante de fundo colorido, iluminada por softbox e enquadrada no celular', caption: 'Captação em estúdio, com luz e direção' },
+];
+const reviews = [
+  { text: 'Serviço de Excelente Qualidade e Agilidade!!! Profissional super comprometido com a satisfação e resultado para o cliente!!! Super recomendo!!!!', who: 'Jorge Batista', from: 'Café da Vila', when: 'print de story, mar/2026' },
+  { text: 'Excelente serviço! Superou minhas expectativas. Fizemos um pacote de gravações para o fim do ano e já me resultou em várias clientes. Recomendo', who: 'Salão VisualPop', from: 'Salão de beleza', when: 'print de story, nov/2025' },
 ];
 const services = [
   { number: '01', label: 'COMEÇAR', title: 'Dar forma à sua marca.', description: 'Sua empresa tem personalidade. A identidade, o perfil e os pontos de contato precisam mostrar isso desde o primeiro olhar.', items: ['Identidade visual', 'Estruturação de perfil', 'Presença digital'], proof: 'Do logo ao Instagram: conheça a história do Café da Vila.', link: '#casos', shape: 'identity' },
@@ -56,12 +76,187 @@ function Tilt({ children, className = '' }: { children: ReactNode; className?: s
 
 function Arrow() { return <span aria-hidden="true">↗</span>; }
 
+function HeroCarousel() {
+  const track = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const [held, setHeld] = useState(false);
+  const paused = useSyncExternalStore(subscribePreferences, getPaused, serverFalse);
+  const cursor = useRef(0);
+  // Duas cópias da lista: ao chegar na segunda, volta em silêncio para a primeira.
+  // O slide é idêntico, então o corte não aparece e o carrossel só anda para a direita.
+  const loop = [...heroShots, ...heroShots];
+  // Posição vem do offsetLeft real de cada slide: calcular por clientWidth acumula o
+  // erro fracionário do flex-basis e deixa uma fatia da foto seguinte aparecendo.
+  function slideAt(node: HTMLDivElement, index: number) {
+    return node.children[index] as HTMLElement | undefined;
+  }
+  function measure() {
+    const node = track.current;
+    if (!node) return;
+    const step = node.clientWidth;
+    if (!step) return;
+    const wrapAt = slideAt(node, heroShots.length);
+    if (wrapAt && node.scrollLeft >= wrapAt.offsetLeft - 1) {
+      node.scrollTo({ left: node.scrollLeft - wrapAt.offsetLeft, behavior: 'auto' });
+      return;
+    }
+    cursor.current = Math.round(node.scrollLeft / step);
+    setActive(cursor.current % heroShots.length);
+  }
+  function go(index: number) {
+    const node = track.current;
+    if (!node) return;
+    const slide = slideAt(node, index);
+    if (!slide) return;
+    node.scrollTo({ left: slide.offsetLeft, behavior: getPaused() ? 'auto' : 'smooth' });
+  }
+  // Autoplay: lê `cursor` por ref para o onScroll da rolagem suave não rearmar o timer a cada quadro.
+  useEffect(() => {
+    if (paused || held) return;
+    const timer = setInterval(() => {
+      const node = track.current;
+      if (document.hidden || !node) return;
+      const next = node.children[cursor.current + 1] as HTMLElement | undefined;
+      if (next) node.scrollTo({ left: next.offsetLeft, behavior: getPaused() ? 'auto' : 'smooth' });
+    }, 5200);
+    return () => clearInterval(timer);
+  }, [paused, held]);
+  const shot = heroShots[active] ?? heroShots[0];
+  return <div className="hero-stage" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)} onFocusCapture={() => setHeld(true)} onBlurCapture={() => setHeld(false)}>
+    <div className="photo-meta"><span>{shot.label}</span><span>RIO DE JANEIRO ↗</span></div>
+    <figure className="hero-photo">
+      <div className="hero-track" ref={track} onScroll={measure} tabIndex={0} role="group" aria-label="Fotos dos bastidores da Tudo Aqui, lista rolável na horizontal">
+        {loop.map((item, index) => <img
+          key={item.src + index}
+          className="hero-slide"
+          aria-hidden={index >= heroShots.length}
+          src={item.src}
+          alt={item.alt}
+          width={item.width}
+          height={item.height}
+          style={{ objectPosition: item.focus }}
+          fetchPriority={index === 0 ? 'high' : 'auto'}
+          loading={index === 0 ? 'eager' : 'lazy'}
+        />)}
+      </div>
+      <div className="photo-corner corner-top"/>
+      <div className="photo-corner corner-bottom"/>
+      <figcaption>{shot.caption}</figcaption>
+    </figure>
+    <div className="hero-dots">
+      <span className="image-disclaimer">Registros de bastidores da Tudo Aqui</span>
+      <div className="dot-row">
+        {heroShots.map((item, index) => <button
+          key={item.src}
+          type="button"
+          className="hero-dot"
+          onClick={() => go((cursor.current >= heroShots.length ? heroShots.length : 0) + index)}
+          aria-current={index === active}
+          aria-label={`Ver a foto ${index + 1} de ${heroShots.length}: ${item.caption}`}
+        />)}
+      </div>
+    </div>
+  </div>;
+}
+
+function Rail() {
+  const track = useRef<HTMLDivElement>(null);
+  // Duas cópias da lista: a volta acontece sempre ANTES de rolar, nunca no meio da
+  // animação, então a emenda entre a última e a primeira não aparece.
+  const loop = [...rail, ...rail];
+  const animating = useRef(false);
+  function cardStep(node: HTMLDivElement) {
+    const card = node.querySelector('.rail-card');
+    return card ? card.getBoundingClientRect().width + 24 : node.clientWidth * .8;
+  }
+  // A volta só acontece com a rolagem parada: cortar meia pista no meio da inércia
+  // do trackpad faz o scroll-snap re-encaixar e dá um salto visível.
+  const settle = useRef<ReturnType<typeof setTimeout>>(undefined);
+  function measure() {
+    clearTimeout(settle.current);
+    settle.current = setTimeout(() => {
+      const node = track.current;
+      if (!node || animating.current || drag.current.active) return;
+      const half = node.scrollWidth / 2;
+      if (half && node.scrollLeft >= half) node.scrollLeft -= half;
+    }, 130);
+  }
+  function step(direction: 1 | -1) {
+    const node = track.current;
+    if (!node) return;
+    const width = cardStep(node);
+    const half = node.scrollWidth / 2;
+    if (direction === 1 && node.scrollLeft + width >= half) node.scrollLeft -= half;
+    if (direction === -1 && node.scrollLeft < width) node.scrollLeft += half;
+    animating.current = true;
+    setTimeout(() => { animating.current = false; }, 700);
+    node.scrollBy({ left: width * direction, behavior: getPaused() ? 'auto' : 'smooth' });
+  }
+  const drag = useRef({ active: false, x: 0, left: 0 });
+  function grab(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse') return;
+    const node = event.currentTarget;
+    drag.current = { active: true, x: event.clientX, left: node.scrollLeft };
+    node.classList.add('is-dragging');
+    node.setPointerCapture(event.pointerId);
+  }
+  function pull(event: PointerEvent<HTMLDivElement>) {
+    if (!drag.current.active) return;
+    const node = event.currentTarget;
+    const half = node.scrollWidth / 2;
+    const next = drag.current.left - (event.clientX - drag.current.x);
+    node.scrollLeft = half ? ((next % half) + half) % half : next;
+  }
+  function release(event: PointerEvent<HTMLDivElement>) {
+    if (!drag.current.active) return;
+    drag.current.active = false;
+    event.currentTarget.classList.remove('is-dragging');
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  }
+  return <div className="rail">
+    <div className="rail-head">
+      <p>Arraste para o lado ou use as setas. Seis dos negócios que aparecem no feed da agência.</p>
+      <div className="rail-controls">
+        <button type="button" className="rail-button" onClick={() => step(-1)} aria-label="Ver os casos anteriores"><span aria-hidden="true">←</span></button>
+        <button type="button" className="rail-button" onClick={() => step(1)} aria-label="Ver os próximos casos"><span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div className="rail-track" ref={track} onScroll={measure} onPointerDown={grab} onPointerMove={pull} onPointerUp={release} onPointerCancel={release} tabIndex={0} role="group" aria-label="Casos de clientes, lista rolável na horizontal">
+      {loop.map((item, index) => <article className="rail-card" key={item.name + index} aria-hidden={index >= rail.length}>
+        <p className="rail-seg">{item.seg}</p>
+        <p className="rail-metric"><strong>{item.metric}</strong><span>{item.unit}</span></p>
+        <div className="rail-brand">{item.logo ? <img src={item.logo} alt="" width="44" height="44" loading="lazy"/> : <span className="rail-monogram" aria-hidden="true">{item.name.charAt(0)}</span>}<h3>{item.name}</h3></div>
+        <p className="rail-did">{item.did}</p>
+        <p className="rail-note">{item.note}</p>
+        <a className="text-link" href={`https://www.instagram.com/${item.handle}/`} target="_blank" rel="noopener noreferrer" tabIndex={index >= rail.length ? -1 : undefined}>Ver o perfil <Arrow/></a>
+      </article>)}
+    </div>
+  </div>;
+}
+
+function Reviews() {
+  return <section className="reviews-section wrap section" id="avaliacoes">
+    <div className="section-heading reveal">
+      <div><p className="eyebrow">04 / O QUE OS CLIENTES ESCREVERAM</p><h2>Avaliações<br/><span className="serif-accent">no Google.</span></h2></div>
+      <p>Duas avaliações de 5 estrelas que a própria agência publicou em seus stories. O texto está na íntegra.</p>
+    </div>
+    <div className="review-list">
+      {reviews.map(review => <figure className="review-card reveal" key={review.who}>
+        <p className="review-stars" aria-label="Avaliação de 5 estrelas"><span aria-hidden="true">★★★★★</span></p>
+        <blockquote>{review.text}</blockquote>
+        <figcaption><strong>{review.who}</strong><span>{review.from}</span><span className="review-source">{review.when}</span></figcaption>
+      </figure>)}
+    </div>
+    <p className="review-cta"><a className="button button-dark" href={googleReview} target="_blank" rel="noopener noreferrer">Avaliar a Tudo Aqui no Google <Arrow/></a></p>
+  </section>;
+}
+
 function Contact() {
   const [interest, setInterest] = useState('Quero entender o que minha marca precisa');
   const options = ['Quero entender o que minha marca precisa', 'Identidade e presença digital', 'Fotos, vídeos e conteúdo', 'Gestão de redes e estratégia'];
   const message = `Olá, Tudo Aqui! Conheci o trabalho de vocês pelo site. ${interest}. Vamos conversar?`;
   return <section className="contact-section" id="contato"><div className="wrap contact-grid">
-    <div><p className="eyebrow">05 / O PRÓXIMO CAPÍTULO</p><h2>Agora, a gente<br/>quer conhecer<br/><span>o seu negócio.</span></h2><p>Conta pra gente o que acontece aí.<br/>Vamos descobrir juntos o próximo passo.</p></div>
+    <div><p className="eyebrow">06 / O PRÓXIMO CAPÍTULO</p><h2>Agora, a gente<br/>quer conhecer<br/><span>o seu negócio.</span></h2><p>Conta pra gente o que acontece aí.<br/>Vamos descobrir juntos o próximo passo.</p></div>
     <div className="contact-action"><label htmlFor="interest">POR ONDE VOCÊ QUER COMEÇAR?</label><select id="interest" value={interest} onChange={e => setInterest(e.target.value)}>{options.map(option => <option key={option}>{option}</option>)}</select><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Vamos conversar no WhatsApp <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
   </div><div className="contact-background" aria-hidden="true">aqui.</div></section>;
 }
@@ -70,6 +265,7 @@ export default function Landing() {
   useEffect(() => {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: .12 });
     document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
     const onMotion = () => { if (query.matches) { document.documentElement.dataset.motion = 'off'; window.dispatchEvent(new Event('tam-preferences')); } };
     query.addEventListener('change', onMotion);
@@ -78,33 +274,37 @@ export default function Landing() {
 
   return <>
     <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div className="playhead" aria-hidden="true"><span className="playhead-bar"/></div>
     <header className="site-header wrap">
-      <a className="brand" href="#inicio" aria-label="Tudo Aqui Marketing — início"><img src="/logos/tudo-aqui.jpg" alt="" width="49" height="49"/><span className="wordmark">tudo aqui<span className="brand-dot">.</span><small>MARKETING</small></span></a>
+      <a className="brand" href="#inicio" aria-label="Tudo Aqui Marketing Digital, início"><BrandLogo/></a>
       <nav aria-label="Navegação principal"><a href="#servicos">O que fazemos</a><a href="#casos">Quem está com a gente</a><a href="#contato" className="nav-cta">Vamos conversar <Arrow/></a></nav>
       <Controls/>
     </header>
     <main id="conteudo">
       <section className="hero wrap" aria-labelledby="hero-title" id="inicio">
         <div className="hero-copy"><p className="eyebrow"><span className="status-dot"/> MARKETING PERTO DE QUEM FAZ.</p><h1 id="hero-title">Seu negócio<br/>tem muito<br/>para <span className="highlight">mostrar.</span></h1><p className="hero-description">Da primeira ideia à presença de todo dia.<br/>Estratégia, identidade e conteúdo que colocam<br className="desktop-break"/> a sua história em movimento.</p><a className="button button-dark" href="#servicos">Encontre seu próximo passo <Arrow/></a><div className="hero-footnote"><span className="tiny-line"/> IDEIAS NO PAPEL. SUA MARCA NO MUNDO.</div></div>
-        <Tilt className="hero-art"><div className="art-backplate" aria-hidden="true"/><div className="photo-meta"><span>CRIATIVIDADE EM MOVIMENTO</span><span>RIO DE JANEIRO ↗</span></div><figure className="hero-photo"><img src="/images/producao.jpg" alt="Referência de produção audiovisual: profissional operando uma câmera" fetchPriority="high" width="1000" height="1400"/><div className="photo-corner corner-top"/><div className="photo-corner corner-bottom"/><span className="rec-label"><i/> REC</span><figcaption>O trabalho começa antes do REC.</figcaption></figure><div className="floating-tag">ESTRATÉGIA + CRIATIVIDADE <Arrow/></div><div className="yellow-note"><span aria-hidden="true">↗</span><p>A gente entra<br/>na sua rotina.<br/><strong>A sua marca<br/>entra em cena.</strong></p></div><div className="cube-scene" aria-hidden="true"><div className="cube"><span className="cube-front">tudo<br/>aqui.</span><span className="cube-back">ideia<br/>boa.</span><span className="cube-right">↗</span><span className="cube-left">✳</span><span className="cube-top">TA.</span><span className="cube-bottom">↗</span></div></div><span className="image-disclaimer">Imagem de referência · Kyle Loftus / Unsplash</span></Tilt>
+        <Tilt className="hero-art"><div className="art-backplate" aria-hidden="true"/><HeroCarousel/><div className="floating-tag">ESTRATÉGIA + CRIATIVIDADE <Arrow/></div><div className="yellow-note"><span aria-hidden="true">↗</span><p>A gente entra<br/>na sua rotina.<br/><strong>A sua marca<br/>entra em cena.</strong></p></div><div className="cube-scene" aria-hidden="true"><div className="cube"><span className="cube-front"><b>01</b>começar</span><span className="cube-left"><b>02</b>aparecer</span><span className="cube-back"><b>03</b>continuar</span><span className="cube-right">tudo<br/>aqui.</span><span className="cube-top">✳</span><span className="cube-bottom">↗</span></div></div></Tilt>
       </section>
 
       <section className="client-section wrap reveal" aria-label="Algumas marcas atendidas pela Tudo Aqui"><div className="client-caption"><p>NEGÓCIOS REAIS.<br/><strong>HISTÓRIAS QUE SE ENCONTRAM AQUI.</strong></p><span aria-hidden="true">↘</span></div><div className="client-logos">{clients.map(client => <a className="client-logo" key={client.name} href={`https://www.instagram.com/${client.handle}/`} target="_blank" rel="noopener noreferrer"><img src={client.image} alt={`Logo ${client.name}`} width="82" height="82" loading="lazy"/><span>{client.name}<small>{client.field}</small></span><span className="client-arrow" aria-hidden="true">↗</span></a>)}</div></section>
 
-      <div className="service-strip" aria-label="Ideia boa, conteúdo com direção e presença de verdade"><div className="marquee-track" aria-hidden="true">{[0,1].map(n => <div className="marquee-group" key={n}><span>IDEIA BOA</span><i>✳</i><span>CONTEÚDO COM DIREÇÃO</span><i>✳</i><span>PRESENÇA DE VERDADE</span><i>✳</i><span>TUDO AQUI</span><i>✳</i></div>)}</div></div>
+      <div className="service-strip" aria-label="Ideia boa, conteúdo com direção e presença de verdade"><div className="marquee-track" aria-hidden="true">{[0,1,2,3,4,5].map(n => <div className="marquee-group" key={n}><span>IDEIA BOA</span><i>✳</i><span>CONTEÚDO COM DIREÇÃO</span><i>✳</i><span>PRESENÇA DE VERDADE</span><i>✳</i><span>TUDO AQUI</span><i>✳</i></div>)}</div></div>
 
       <section className="services wrap section" id="servicos"><div className="section-heading reveal"><div><p className="eyebrow">01 / O QUE FAZEMOS</p><h2>Cada negócio,<br/><span className="serif-accent">um momento.</span></h2></div><p>Para começar, aparecer ou ter alguém acompanhando. A gente encontra o caminho junto com você.</p></div><div className="service-list">{services.map((service, i) => <details className="service-row reveal" name="services" key={service.number} open={i===0}><summary><span className="service-number">{service.number}</span><div><span className="service-label">{service.label}</span><h3>{service.title}</h3></div><span className="expand-symbol" aria-hidden="true">+</span></summary><div className="service-content"><div className={`service-sculpture ${service.shape}`} aria-hidden="true"><span/><span/><span/></div><div><p>{service.description}</p><ul className="service-tags">{service.items.map(item => <li key={item}>{item}</li>)}</ul><a className="text-link" href={service.link}>{service.proof} <Arrow/></a></div></div></details>)}</div></section>
 
-      <section className="work-section" id="casos"><div className="wrap section"><div className="section-heading reveal"><div><p className="eyebrow">02 / QUEM ESTÁ COM A GENTE</p><h2>Mais que projetos.<br/><span className="serif-accent">Histórias em comum.</span></h2></div><p>O trabalho ganha sentido quando faz parte da trajetória de quem confia na gente.</p></div><Tilt className="featured-case"><div className="case-number"><span className="eyebrow">CONTEÚDO QUE ABRE CONVERSAS</span><strong>822<span>↗</span></strong><p>cliques para contato em 90 dias</p><span className="case-source">Resultado divulgado em junho de 2026.</span></div><div className="case-story"><div className="case-brand"><img src="/logos/johan.jpg" alt="Logo Johan Veículos" width="64" height="64" loading="lazy"/><span>JOHAN VEÍCULOS<small>ESTRATÉGIA + CONTEÚDO + GESTÃO</small></span></div><h3>Uma parceria<br/>que segue em frente.</h3><p>Conteúdo educativo, produção de vídeos e acompanhamento. Uma relação que ganhou continuidade, com renovações e evolução do plano contratado.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/p/DZclExJFrI1/" target="_blank" rel="noopener noreferrer">Conheça o caso publicado <Arrow/></a></div></Tilt><div className="case-duo"><article className="small-case reveal"><div className="case-brand"><img src="/logos/cafe-da-vila.jpg" alt="Logo Café da Vila" width="56" height="56" loading="lazy"/><span>CAFÉ DA VILA<small>IDENTIDADE + PRESENÇA DIGITAL</small></span></div><h3>Uma marca começando<br/>a contar sua história.</h3><p>Criação de identidade visual, Instagram e mini site. Uma presença digital construída desde o começo.</p><a className="text-link" href="https://www.instagram.com/cafedavila21/" target="_blank" rel="noopener noreferrer">Conheça a marca <Arrow/></a></article><article className="small-case reveal"><div className="case-brand"><img src="/logos/el-hombre.png" alt="Logo El Hombre" width="56" height="56" loading="lazy"/><span>EL HOMBRE<small>CONTEÚDO + ACOMPANHAMENTO</small></span></div><h3>O dia a dia também<br/>rende boas histórias.</h3><p>Planejamento, gravações e conteúdo que acompanham a rotina de uma barbearia. Uma parceria construída ao longo de aproximadamente dois anos.</p><a className="text-link" href="https://www.instagram.com/barbearia_elhombre/" target="_blank" rel="noopener noreferrer">Conheça a marca <Arrow/></a></article></div><p className="work-footnote">Histórias e dados do levantamento de setembro de 2026. Cliques para contato não equivalem a vendas.</p></div></section>
+      <section className="work-section" id="casos"><div className="wrap section"><div className="section-heading reveal"><div><p className="eyebrow">02 / QUEM ESTÁ COM A GENTE</p><h2>Mais que projetos.<br/><span className="serif-accent">Histórias em comum.</span></h2></div><p>O trabalho ganha sentido quando faz parte da trajetória de quem confia na gente.</p></div><Tilt className="featured-case"><div className="case-number"><span className="eyebrow">CONTEÚDO QUE ABRE CONVERSAS</span><strong>822<span>↗</span></strong><p>cliques para contato em 90 dias</p><span className="case-source">Resultado divulgado em junho de 2026.</span></div><div className="case-story"><div className="case-brand"><img src="/logos/johan.jpg" alt="Logo Johan Veículos" width="64" height="64" loading="lazy"/><span>JOHAN VEÍCULOS<small>ESTRATÉGIA + CONTEÚDO + GESTÃO</small></span></div><h3>Uma parceria<br/>que segue em frente.</h3><p>Conteúdo educativo, produção de vídeos e acompanhamento. Uma relação que ganhou continuidade, com renovações e evolução do plano contratado.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/p/DZclExJFrI1/" target="_blank" rel="noopener noreferrer">Conheça o caso publicado <Arrow/></a></div></Tilt><Rail/><p className="work-footnote">Histórias e dados do levantamento de setembro de 2026. Cliques para contato não equivalem a vendas, e alcance não equivale a faturamento.</p></div></section>
 
       <section className="about-section wrap section" id="por-perto"><Tilt className="about-photo"><img src="/images/bastidores.jpg" alt="Registro publicado pela Tudo Aqui na Seven Barber, durante a formalização da parceria" width="900" height="1200" loading="lazy"/><span className="photo-index">NA ROTINA DE QUEM FAZ. ↗</span><span className="about-sticker" aria-hidden="true">gente<br/>com<br/>gente.</span></Tilt><div className="about-copy reveal"><p className="eyebrow">03 / NOSSO JEITO DE TRABALHAR</p><h2>Para contar<br/>sua história,<br/><span className="serif-accent">a gente chega perto.</span></h2><p>Antes do roteiro, tem conversa. Antes da câmera, tem uma ideia. E antes de qualquer estratégia, tem o seu negócio.</p><p>A Tudo Aqui combina planejamento, produção e acompanhamento para construir uma comunicação com a sua cara.</p><ol className="process-list"><li><span>01</span><div><strong>A gente escuta.</strong><p>Entende seu momento e o que você quer construir.</p></div></li><li><span>02</span><div><strong>A gente coloca em movimento.</strong><p>Transforma o plano em identidade, conteúdo e presença.</p></div></li><li><span>03</span><div><strong>A gente acompanha.</strong><p>Conversa sobre o trabalho e ajusta os próximos passos.</p></div></li></ol></div></section>
 
       <section className="quote-section"><div className="wrap reveal"><span className="quote-mark" aria-hidden="true">“</span><blockquote>Além de trabalhar muito e entregar resultados, deixa o ambiente mais leve, saudável e descontraído.</blockquote><p><strong>Marlon França</strong><span>Johan Veículos · depoimento publicado</span></p></div></section>
 
-      <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">04 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list"><details><summary>Preciso contratar todos os serviços?<span aria-hidden="true">+</span></summary><p>A conversa começa pela sua necessidade. A agência atua em identidade, presença digital, produção de conteúdo e gestão. O escopo é definido de acordo com o projeto.</p></details><details><summary>Meu negócio está começando. Faz sentido?<span aria-hidden="true">+</span></summary><p>Sim. O Café da Vila é um exemplo de presença estruturada desde o início, com identidade, Instagram e mini site. Podemos conversar sobre o que precisa vir primeiro na sua empresa.</p></details><details><summary>Vocês também fazem fotos e vídeos?<span aria-hidden="true">+</span></summary><p>Sim. Produção audiovisual e fotografia fazem parte do trabalho. Formato, quantidade, local e agenda de captação são combinados na proposta.</p></details><details><summary>Como recebo uma proposta?<span aria-hidden="true">+</span></summary><p>Fale com a equipe pelo WhatsApp. Conte sobre o seu negócio e o que procura para que a Tudo Aqui entenda o projeto e apresente uma proposta.</p></details></div></section>
+      <Reviews/>
+
+      <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">05 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list"><details><summary>Preciso contratar todos os serviços?<span aria-hidden="true">+</span></summary><p>A conversa começa pela sua necessidade. A agência atua em identidade, presença digital, produção de conteúdo e gestão. O escopo é definido de acordo com o projeto.</p></details><details><summary>Meu negócio está começando. Faz sentido?<span aria-hidden="true">+</span></summary><p>Sim. O Café da Vila é um exemplo de presença estruturada desde o início, com identidade, Instagram e mini site. Podemos conversar sobre o que precisa vir primeiro na sua empresa.</p></details><details><summary>Vocês também fazem fotos e vídeos?<span aria-hidden="true">+</span></summary><p>Sim. Produção audiovisual e fotografia fazem parte do trabalho. Formato, quantidade, local e agenda de captação são combinados na proposta.</p></details><details><summary>Como recebo uma proposta?<span aria-hidden="true">+</span></summary><p>Fale com a equipe pelo WhatsApp. Conte sobre o seu negócio e o que procura para que a Tudo Aqui entenda o projeto e apresente uma proposta.</p></details></div></section>
 
       <Contact/>
     </main>
-    <footer className="site-footer wrap"><a className="brand" href="#inicio"><img src="/logos/tudo-aqui.jpg" alt="" width="40" height="40"/><span className="wordmark">tudo aqui.<small>MARKETING</small></span></a><p>Estratégia. Conteúdo. Gente de verdade.</p><a href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Instagram <Arrow/></a><span className="prototype-note">Protótipo criativo · 2026</span></footer>
+    <footer className="site-footer wrap"><a className="brand" href="#inicio" aria-label="Tudo Aqui Marketing Digital, voltar ao topo"><BrandLogo className="is-footer"/></a><p>Estratégia. Conteúdo. Gente de verdade.</p><a href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Instagram <Arrow/></a></footer>
+    <div className="credit wrap"><span>Desenvolvido pela</span><QuazzLogo/></div>
   </>;
 }

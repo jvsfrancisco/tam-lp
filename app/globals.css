@@ -30,3 +30,257 @@ body{transition:background-color .3s,color .3s}main{overflow:clip}button{color:i
 @media(max-width:380px){.wrap{padding-left:19px;padding-right:19px}.brand>img{width:32px;height:32px}.wordmark{font-size:19px}h1{font-size:76px}.hero-photo{height:395px}.client-logos{gap:20px 12px}.client-logo img{width:45px;height:45px}.client-logo>span:not(.client-arrow){font-size:10px}.service-row h3{font-size:28px;max-width:200px}.contact-section h2{font-size:58px}.about-copy h2{font-size:52px}}
 @media(hover:none){.tilt{transform:none!important}.client-arrow{opacity:1}.service-sculpture{pointer-events:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.tilt{transform:none!important}.reveal{opacity:1;transform:none}.motion-toggle{display:none}}
+
+/* ---------------------------------------------------------------------------
+   Escala de leitura. O display continua grande; o que estava entre 6 e 13 px
+   sobe para uma faixa legível. Em clamp() para não brigar com os breakpoints
+   declarados acima, que continuam valendo para layout.
+   --------------------------------------------------------------------------- */
+:root{--t-body:clamp(16px,1.15vw,18px);--t-sec:clamp(15px,1.05vw,17px);--t-link:clamp(13px,.95vw,15px);--t-label:clamp(11px,.8vw,13px);--t-micro:clamp(10px,.72vw,12px)}
+.wordmark small{font-size:clamp(8px,.6vw,10px);letter-spacing:2.4px}
+.site-header nav{font-size:var(--t-link)}
+.button{font-size:var(--t-link)}
+.text-link{font-size:var(--t-link)}
+.eyebrow{font-size:var(--t-label);letter-spacing:1.4px}
+.hero-description{font-size:clamp(17px,1.35vw,20px);max-width:470px}
+.hero-footnote{font-size:var(--t-micro);letter-spacing:.9px}
+.photo-meta,.image-disclaimer,.rec-label,.floating-tag{font-size:var(--t-micro)}
+.hero-photo figcaption{font-size:var(--t-label)}
+.client-caption{font-size:var(--t-label);line-height:1.6}
+.client-logo>span:not(.client-arrow){font-size:var(--t-label)}
+.client-logo small{font-size:var(--t-micro)}
+.section-heading>p{font-size:var(--t-sec);max-width:360px}
+.service-number,.service-label{font-size:var(--t-label)}
+.service-row h3{font-size:clamp(30px,3vw,44px)}
+.service-content p{font-size:var(--t-body);max-width:600px}
+.service-tags li{font-size:var(--t-micro);padding:9px 13px}
+.case-number .eyebrow{font-size:var(--t-label)}
+.case-number>p{font-size:clamp(17px,1.3vw,20px)}
+.case-source,.case-brand small,.work-footnote,.photo-index{font-size:var(--t-micro)}
+.case-brand>span{font-size:var(--t-label)}
+.case-story>p,.small-case>p{font-size:var(--t-body);max-width:480px}
+.about-copy>p:not(.eyebrow){font-size:var(--t-body);max-width:470px}
+.process-list li>span{font-size:var(--t-label)}
+.process-list strong{font-size:var(--t-sec)}
+.process-list p{font-size:var(--t-label);line-height:1.65}
+.quote-section blockquote{font-size:clamp(28px,3vw,42px)}
+.quote-section p{font-size:var(--t-label)}
+.faq-list summary{font-size:var(--t-sec)}
+.faq-list p{font-size:var(--t-body);line-height:1.75}
+.contact-section p{font-size:var(--t-sec)}
+.contact-action label{font-size:var(--t-label)}
+.contact-action select{font-size:var(--t-sec)}
+.contact-action p{font-size:var(--t-label)}
+.contact-action .text-link{font-size:var(--t-link)}
+.site-footer>p{font-size:var(--t-label)}
+.site-footer>a:not(.brand){font-size:var(--t-link)}
+.prototype-note{font-size:var(--t-micro)}
+
+/* ---------------------------------------------------------------------------
+   Marquee: eram dois grupos com translateX(-50%). Um grupo mede menos que a
+   viewport, então depois do salto sobrava tarja amarela sem palavra. Seis
+   grupos, deslocando a largura de um só: restam cinco cobrindo a tela.
+   --------------------------------------------------------------------------- */
+.service-strip{perspective:1200px}
+.marquee-track{animation-name:marquee-loop;will-change:transform}
+@keyframes marquee-loop{from{transform:rotateX(9deg) translateX(0)}to{transform:rotateX(9deg) translateX(-16.6667%)}}
+.marquee-group{font-size:clamp(22px,2vw,30px)}
+
+/* ---------------------------------------------------------------------------
+   Timeline de gravação: a página rola como um editor de vídeo. O cubo virou
+   os três serviços, a barra do topo é o playhead e as fichas de caso giram
+   no eixo ao entrar em quadro. Tudo scroll-driven puro, sem JS. Onde o
+   browser não suporta animation-timeline, o estado final já é o desenho
+   correto e a barra some.
+   --------------------------------------------------------------------------- */
+.playhead{display:none;position:fixed;top:0;left:0;right:0;height:4px;z-index:90;background:var(--line);pointer-events:none}
+.playhead-bar{display:block;position:relative;height:100%;width:100%;background:var(--yellow);transform-origin:0 50%;transform:scaleX(0)}
+.playhead-bar:after{content:'';position:absolute;top:0;right:-1px;width:2px;height:13px;background:var(--ink)}
+.cube-scene{width:112px;height:112px}
+.cube,.cube>span{width:92px;height:92px}
+.cube>span{flex-direction:column;gap:3px;font-size:12px;font-weight:600;letter-spacing:.3px;line-height:1;text-align:center}
+.cube>span b{font-size:21px;font-weight:800;line-height:1}
+.cube .cube-front{transform:translateZ(46px)}
+.cube .cube-back{transform:rotateY(180deg) translateZ(46px)}
+.cube .cube-right{transform:rotateY(90deg) translateZ(46px);background:#e4a900;font-size:17px;font-weight:800;letter-spacing:-.8px}
+.cube .cube-left{transform:rotateY(-90deg) translateZ(46px);background:#e4a900;font-size:12px}
+.cube .cube-top{transform:rotateX(90deg) translateZ(46px);background:#ffe07a;font-size:34px}
+.cube .cube-bottom{transform:rotateX(-90deg) translateZ(46px);background:#c99600;font-size:30px}
+.case-number{transform-origin:100% 50%}
+.case-story,.small-case{transform-origin:0 50%}
+@keyframes monitor-tip{from{transform:translateZ(35px) rotateX(0)}to{transform:translateZ(18px) rotateX(-11deg)}}
+@keyframes logo-rise{from{transform:perspective(700px) rotateX(40deg) translateY(18px);opacity:.2}to{transform:perspective(700px) rotateX(0) translateY(0);opacity:1}}
+/* Sem opacidade nestas: várias entram em quadro ao mesmo tempo e a seção
+   inteira ficava lavada, lendo como bug de renderização. O fade quem faz é o
+   .reveal, uma vez só, por elemento. Aqui é só movimento. */
+@keyframes ficha-left{from{transform:perspective(1500px) rotateY(11deg)}to{transform:perspective(1500px) rotateY(0)}}
+@keyframes ficha-right{from{transform:perspective(1500px) rotateY(-11deg)}to{transform:perspective(1500px) rotateY(0)}}
+@keyframes lift-in{from{transform:perspective(900px) rotateX(13deg) translateY(22px)}to{transform:perspective(900px) rotateX(0) translateY(0)}}
+@keyframes step-in{from{transform:translateX(-18px)}to{transform:translateX(0)}}
+@keyframes aqui-drift{from{transform:translate3d(9%,7%,0)}to{transform:translate3d(-9%,-7%,0)}}
+@supports (animation-timeline:scroll()){
+  .playhead{display:block}
+  .playhead-bar{animation:playhead linear both;animation-timeline:scroll(root block)}
+  .hero-photo{animation:monitor-tip linear both;animation-timeline:scroll(root block);animation-range:0 620px}
+  .client-logo{animation:logo-rise linear both;animation-timeline:view(block);animation-range:entry 10% entry 95%}
+  .case-number{animation:ficha-left linear both;animation-timeline:view(block);animation-range:entry 10% entry 65%}
+  .case-story{animation:ficha-right linear both;animation-timeline:view(block);animation-range:entry 10% entry 65%}
+  .contact-background{animation:aqui-drift linear both;animation-timeline:view(block);animation-range:cover}
+  .section-heading>div,.section-heading>p{animation:lift-in linear both;animation-timeline:view(block);animation-range:entry 5% entry 70%}
+  .section-heading>p{animation-range:entry 12% entry 78%}
+  .process-list li{animation:step-in linear both;animation-timeline:view(block);animation-range:entry 5% entry 72%}
+  .faq-list details{animation:step-in linear both;animation-timeline:view(block);animation-range:entry 0% entry 62%}
+  .quote-section blockquote{animation:lift-in linear both;animation-timeline:view(block);animation-range:entry 10% entry 80%}
+  .rail-card{animation:lift-in linear both;animation-timeline:view(inline);animation-range:entry 0% entry 55%}
+  .review-card{animation:ficha-right linear both;animation-timeline:view(block);animation-range:entry 5% entry 70%}
+  .service-row{animation:step-in linear both;animation-timeline:view(block);animation-range:entry 0% entry 55%}
+}
+@keyframes playhead{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* Em toque, .tilt{transform:none} tira a perspectiva do pai: o rotateX do
+   monitor viraria um achatamento vertical sem profundidade. Melhor não tombar. */
+@media(hover:none){.hero-photo{animation:none!important;transform:translateZ(35px)!important}}
+[data-motion='off'] .playhead{display:none}
+[data-motion='off'] .client-logo,[data-motion='off'] .case-number,[data-motion='off'] .case-story,[data-motion='off'] .small-case,[data-motion='off'] .contact-background{animation:none!important;opacity:1!important;transform:none!important}
+[data-motion='off'] .hero-photo{animation:none!important;transform:translateZ(35px)!important}
+@media(prefers-reduced-motion:reduce){.playhead{display:none!important}.client-logo,.case-number,.case-story,.small-case,.contact-background{opacity:1!important;transform:none!important}.hero-photo{transform:translateZ(35px)!important}}
+/* ---------------------------------------------------------------------------
+   Marcador de seção do playhead, carrossel de casos e avaliações do Google.
+   --------------------------------------------------------------------------- */
+/* Carrossel do hero: as fotos são retrato (720-960x1280) num quadro deitado,
+   então cada slide carrega o próprio object-position (style inline em heroShots). */
+/* Marca: lockup oficial vetorizado. "Tudo"/"DIGITAL" em currentColor seguem o tema. */
+/* Barra de rolagem da página: amarela, fina, sem as setinhas das pontas.
+   `scrollbar-width:thin` (Firefox) já não desenha botão; o ::-webkit-scrollbar-button
+   é o que some com eles no Chrome. */
+html{scrollbar-width:thin;scrollbar-color:var(--yellow) transparent}
+::-webkit-scrollbar{width:10px;height:10px;background:transparent}
+::-webkit-scrollbar-track,::-webkit-scrollbar-track-piece{background:transparent;border:0;box-shadow:none}
+::-webkit-scrollbar-thumb{background:var(--yellow);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:#e0ab00;background-clip:padding-box}
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment,
+::-webkit-scrollbar-button:vertical,
+::-webkit-scrollbar-button:horizontal{display:none;width:0;height:0;background:transparent}
+::-webkit-scrollbar-corner{background:transparent}
+
+/* CTA do WhatsApp: a seção inteira é amarela, então o select amarelo sumia no fundo
+   e o popup nativo herdava a mesma cor. Vira um campo claro, com seta própria. */
+.contact-action select{
+  width:100%;max-width:100%;box-sizing:border-box;
+  appearance:none;-webkit-appearance:none;
+  background-color:#fffdf7;color:#171815;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='%23171815' d='M0 0h10L5 6z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;background-size:10px 6px;
+  border:1px solid #1718153d;border-radius:3px;
+  font-size:14px;line-height:1.4;
+  padding:15px 42px 15px 15px;
+  text-overflow:ellipsis;
+}
+.contact-action select:hover{border-color:#171815}
+.contact-action select:focus-visible{outline:3px solid #171815;outline-offset:2px}
+.contact-action option{background:#fffdf7;color:#171815}
+/* 16px evita o zoom automático do iOS ao focar o campo */
+@media(max-width:760px){.contact-action select{font-size:16px;padding:14px 38px 14px 13px}}
+/* Crédito de quem desenvolveu. Fica numa faixa própria, fora do flex do footer,
+   que já quebra em duas linhas no mobile. */
+.credit{display:flex;align-items:center;justify-content:center;gap:9px;padding-bottom:36px;border-top:1px solid var(--line);padding-top:26px;font-size:11px;letter-spacing:.3px;color:var(--muted)}
+.credit .quazz-logo{height:15px;width:auto;display:block;color:var(--ink);opacity:.85}
+@media(max-width:760px){.credit{padding-top:22px;padding-bottom:30px;font-size:10px}.credit .quazz-logo{height:13px}}
+.brand-logo{height:76px;width:auto;display:block}
+.brand-logo .lg-ink{fill:currentColor}
+.brand-logo .lg-brand{fill:var(--yellow)}
+.brand-logo.is-footer{height:62px}
+@media(max-width:900px){.brand-logo{height:64px}}
+@media(max-width:760px){.brand-logo{height:50px}.brand-logo.is-footer{height:44px}}
+/* Controles: o <button> do UA traz padding próprio e alinha o glifo pela baseline,
+   então largura fixa + line-height:1 deixava o ícone fora do centro. */
+.icon-button{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.rail-button{padding:0}
+.rail-button>span{display:block;line-height:1}
+/* O thumb anda em passos de meia largura; as duas colunas têm de usar a mesma malha,
+   senão os emojis ficam alguns pixels fora do centro do círculo amarelo. */
+.theme-toggle{padding:0}
+.theme-toggle>span:not(.theme-thumb){flex:1 1 0;text-align:center}
+.theme-thumb{transform:translateX(0)}
+[data-theme='dark'] .theme-thumb{transform:translateX(32px)}
+@media(max-width:760px){[data-theme='dark'] .theme-thumb{transform:translateX(30px)}}
+.hero-stage{transform-style:preserve-3d}
+.hero-photo{height:546px}
+.hero-track{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior-x:contain}
+.hero-track::-webkit-scrollbar{display:none}
+.hero-slide{flex:0 0 100%;width:100%;min-width:100%;height:100%;object-fit:cover;scroll-snap-align:start;scroll-snap-stop:always;filter:saturate(.7);transition:filter .6s}
+.hero-art:hover .hero-slide{filter:saturate(1)}
+.hero-dots{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:13px;transform:translateZ(0)}
+.hero-dots .image-disclaimer{margin-top:0}
+.dot-row{display:flex;gap:8px}
+.hero-dot{width:22px;height:5px;padding:0;border:0;background:var(--line);transition:background .25s,width .25s}
+.hero-dot[aria-current='true']{background:var(--yellow);width:34px}
+.hero-dot:hover{background:var(--muted)}
+@media(min-width:1600px){.hero-photo{height:580px}}
+@media(max-width:900px){.hero-photo{height:500px}}
+@media(max-width:760px){.hero-photo{height:470px}}
+.playhead{overflow:visible}
+.playhead-mark{position:fixed;left:18px;bottom:18px;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--muted);background:var(--paper);border:1px solid var(--line);padding:7px 12px;white-space:nowrap}
+
+.rail{margin-top:46px}
+.rail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:22px}
+.rail-head>p{margin:0;max-width:430px;font-size:var(--t-label);line-height:1.7;color:var(--muted)}
+.rail-controls{display:flex;gap:10px;flex-shrink:0}
+.rail-button{width:52px;height:52px;border:1px solid var(--line);background:none;color:inherit;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s,border-color .2s}
+.rail-button:hover:not(:disabled){background:var(--yellow);color:#171815;border-color:var(--yellow)}
+.rail-button:disabled{opacity:.3;cursor:default}
+.rail-track{display:flex;gap:24px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;padding-bottom:18px;scrollbar-width:none;-ms-overflow-style:none}
+.rail-track::-webkit-scrollbar{display:none}
+.rail-track.is-dragging{scroll-snap-type:none;cursor:grabbing;user-select:none}
+.rail-track:focus-visible{outline:3px solid #c69200;outline-offset:4px}
+.rail-card{flex:0 0 340px;scroll-snap-align:start;border:1px solid var(--line);background:#1e201a;padding:30px 28px;display:flex;flex-direction:column;min-height:404px}
+.rail-seg{margin:0 0 16px;font-size:var(--t-micro);letter-spacing:1.6px;font-weight:700;color:var(--muted)}
+.rail-metric{margin:0 0 22px;display:flex;flex-direction:column;gap:7px}
+.rail-metric strong{font-family:var(--font-display),sans-serif;font-size:clamp(36px,3.4vw,50px);line-height:.95;letter-spacing:-1px;font-weight:700;color:var(--yellow)}
+.rail-metric>span{font-size:var(--t-label);line-height:1.5;color:var(--inverse-text)}
+.rail-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rail-brand img{width:44px;height:44px;border-radius:50%;object-fit:contain;background:#050505;flex-shrink:0}
+.rail-monogram{width:44px;height:44px;border-radius:50%;background:var(--yellow);color:#171815;display:flex;align-items:center;justify-content:center;font-family:var(--font-display),sans-serif;font-size:22px;font-weight:700;flex-shrink:0}
+.rail-brand h3{margin:0;font-size:clamp(19px,1.6vw,23px);font-weight:600;line-height:1.15;letter-spacing:-.3px}
+.rail-did{margin:0 0 14px;font-size:var(--t-sec);line-height:1.6;color:var(--inverse-text)}
+.rail-note{margin:0 0 20px;font-size:var(--t-micro);line-height:1.7;color:var(--muted);border-left:2px solid var(--yellow);padding-left:12px}
+.rail-card .text-link{margin-top:auto}
+
+.review-list{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.review-card{margin:0;border:1px solid var(--line);background:var(--surface);padding:32px 30px;display:flex;flex-direction:column;transform-origin:0 50%}
+.review-stars{margin:0 0 18px;font-size:27px;letter-spacing:3px;line-height:1;color:#d99400;-webkit-text-stroke:.6px #7a5200;text-shadow:0 1px 0 #00000014}
+[data-theme='dark'] .review-stars{color:var(--yellow);-webkit-text-stroke:0}
+.review-card blockquote{margin:0 0 22px;padding:0;font-size:var(--t-body);line-height:1.7}
+.review-card figcaption{margin-top:auto;display:flex;flex-direction:column;gap:5px}
+.review-card figcaption strong{font-size:var(--t-sec)}
+.review-card figcaption>span{font-size:var(--t-label);color:var(--muted)}
+.review-card .review-source{font-size:var(--t-micro)}
+.review-cta{margin:30px 0 0}
+
+/* ---------------------------------------------------------------------------
+   Acordeão: animar os filhos em cascata. A altura do <details> fica quieta,
+   o conteúdo é que entra em ordem. O estado base é visível, senão o botão de
+   pausar movimento apagaria o conteúdo em vez de só parar a animação.
+   --------------------------------------------------------------------------- */
+@keyframes unfold-part{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.service-content{animation:none}
+.service-row[open] .service-sculpture{animation:unfold-part .5s .04s ease-out both}
+.service-row[open] .service-content>div>p{animation:unfold-part .5s .13s ease-out both}
+.service-row[open] .service-tags li{animation:unfold-part .45s ease-out both}
+.service-row[open] .service-tags li:nth-child(1){animation-delay:.2s}
+.service-row[open] .service-tags li:nth-child(2){animation-delay:.26s}
+.service-row[open] .service-tags li:nth-child(3){animation-delay:.32s}
+.service-row[open] .service-content .text-link{animation:unfold-part .5s .4s ease-out both}
+.service-row[open] .service-sculpture>span:nth-child(1){transform:translate(-21px,-20px) rotateY(-34deg) rotateX(15deg)}
+.service-row[open] .service-sculpture>span:nth-child(3){transform:translate(22px,22px) rotateY(-14deg) rotateX(15deg)}
+.expand-symbol{transition:transform .35s cubic-bezier(.2,.7,.3,1.3),background .3s,border-color .3s}
+
+[data-motion='off'] .service-sculpture,[data-motion='off'] .service-content>div>p,[data-motion='off'] .service-tags li,[data-motion='off'] .service-content .text-link,[data-motion='off'] .section-heading>div,[data-motion='off'] .section-heading>p,[data-motion='off'] .process-list li,[data-motion='off'] .faq-list details,[data-motion='off'] .quote-section blockquote,[data-motion='off'] .rail-card,[data-motion='off'] .review-card,[data-motion='off'] .service-row{animation:none!important;opacity:1!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){.service-sculpture,.service-content>div>p,.service-tags li,.service-content .text-link,.section-heading>div,.section-heading>p,.process-list li,.faq-list details,.quote-section blockquote,.rail-card,.review-card,.service-row{opacity:1!important;transform:none!important}}
+
+@media(max-width:1150px){.review-list{gap:20px}.rail-card{flex-basis:320px}}
+@media(max-width:900px){.review-list{grid-template-columns:1fr}.rail-head{flex-direction:column;align-items:flex-start;gap:18px}}
+@media(max-width:760px){.rail-card{flex-basis:78vw;min-height:0;padding:26px 22px}.rail-button{width:46px;height:46px}.review-card{padding:26px 22px}.playhead-mark{left:12px;bottom:12px;font-size:9px;padding:6px 10px}}
+
+@media(max-width:760px){.cube-scene{width:96px;height:96px}.cube,.cube>span{width:78px;height:78px}.cube>span b{font-size:18px}.cube>span{font-size:10px}.cube .cube-front{transform:translateZ(39px)}.cube .cube-back{transform:rotateY(180deg) translateZ(39px)}.cube .cube-right{transform:rotateY(90deg) translateZ(39px);font-size:15px}.cube .cube-left{transform:rotateY(-90deg) translateZ(39px);font-size:10px}.cube .cube-top{transform:rotateX(90deg) translateZ(39px)}.cube .cube-bottom{transform:rotateX(-90deg) translateZ(39px)}.client-caption{font-size:var(--t-micro)}.playhead{height:3px}}
