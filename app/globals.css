@@ -165,24 +165,22 @@ body{transition:background-color .3s,color .3s}main{overflow:clip}button{color:i
   html{scrollbar-width:thin;scrollbar-color:var(--yellow) transparent}
 }
 
-/* CTA do WhatsApp: a seção inteira é amarela, então o select amarelo sumia no fundo
-   e o popup nativo herdava a mesma cor. Vira um campo claro, com seta própria. */
-.contact-action select{
-  width:100%;max-width:100%;box-sizing:border-box;
-  appearance:none;-webkit-appearance:none;
-  background-color:#fffdf7;color:#171815;
-  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='%23171815' d='M0 0h10L5 6z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 16px center;background-size:10px 6px;
-  border:1px solid #1718153d;border-radius:3px;
-  font-size:14px;line-height:1.4;
-  padding:15px 42px 15px 15px;
-  text-overflow:ellipsis;
-}
-.contact-action select:hover{border-color:#171815}
-.contact-action select:focus-visible{outline:3px solid #171815;outline-offset:2px}
-.contact-action option{background:#fffdf7;color:#171815}
-/* 16px evita o zoom automático do iOS ao focar o campo */
-@media(max-width:760px){.contact-action select{font-size:16px;padding:14px 38px 14px 13px}}
+/* As opções ficam no fluxo da página para caber no celular sem cobrir o CTA. */
+.contact-action{min-width:0}
+.interest-label{display:block;font-size:8px;font-weight:700;letter-spacing:1.3px;margin-bottom:12px}
+.interest-picker{width:100%;background:#fffdf7;color:#171815;border:1px solid #1718153d;border-radius:6px}
+.interest-picker summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:54px;padding:15px;list-style:none;cursor:pointer;font-size:14px;line-height:1.5}
+.interest-picker summary::-webkit-details-marker{display:none}
+.interest-picker summary>span:first-child,.interest-options button>span:first-child{min-width:0;overflow-wrap:anywhere}
+.interest-chevron{width:8px;height:8px;border-right:2px solid;border-bottom:2px solid;transform:rotate(45deg);flex-shrink:0;margin-right:3px}
+.interest-picker[open] .interest-chevron{transform:rotate(225deg)}
+.interest-options{padding:6px;border-top:1px solid #17181526;display:grid;gap:4px}
+.interest-options button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:12px 10px;background:transparent;color:#171815;border:0;border-radius:3px;text-align:left;font-size:14px;line-height:1.5;white-space:normal}
+.interest-options button[aria-pressed='true']{background:#f8c010;font-weight:600}
+.interest-check{width:18px;flex-shrink:0;text-align:center}
+.interest-picker summary:focus-visible,.interest-options button:focus-visible{outline:2px solid #171815;outline-offset:-3px}
+@media(hover:hover){.interest-options button:hover{background:#f9e8aa}.interest-options button[aria-pressed='true']:hover{background:#f8c010}}
+@media(max-width:760px){.interest-picker summary,.interest-options button{font-size:16px}}
 /* Crédito de quem desenvolveu. Fica numa faixa própria, fora do flex do footer,
    que já quebra em duas linhas no mobile. */
 .credit{display:flex;align-items:center;justify-content:center;gap:9px;padding-bottom:36px;border-top:1px solid var(--line);padding-top:26px;font-size:11px;letter-spacing:.3px;color:var(--muted)}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type PointerEvent } from 'react';
 import { BrandLogo } from './brand-logo';
 import { QuazzLogo } from './quazz-logo';
+import { InterestPicker } from './interest-picker';
 
 const whatsapp = 'https://wa.me/5521999888061';
 const googleReview = 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x997fd9270884ef:0x4f13ae1597048f17!12e1?source=g.page.m._&laa=merchant-review-solicitation';
@@ -253,11 +254,10 @@ function Reviews() {
 
 function Contact() {
   const [interest, setInterest] = useState('Quero entender o que minha marca precisa');
-  const options = ['Quero entender o que minha marca precisa', 'Identidade e presença digital', 'Fotos, vídeos e conteúdo', 'Gestão de redes e estratégia'];
   const message = `Olá, Tudo Aqui! Conheci o trabalho de vocês pelo site. ${interest}. Vamos conversar?`;
   return <section className="contact-section" id="contato"><div className="wrap contact-grid">
     <div><p className="eyebrow">06 / O PRÓXIMO CAPÍTULO</p><h2>Agora, a gente<br/>quer conhecer<br/><span>o seu negócio.</span></h2><p>Conta pra gente o que acontece aí.<br/>Vamos descobrir juntos o próximo passo.</p></div>
-    <div className="contact-action"><label htmlFor="interest">POR ONDE VOCÊ QUER COMEÇAR?</label><select id="interest" value={interest} onChange={e => setInterest(e.target.value)}>{options.map(option => <option key={option}>{option}</option>)}</select><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Vamos conversar no WhatsApp <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
+    <div className="contact-action"><InterestPicker value={interest} onChange={setInterest}/><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Vamos conversar no WhatsApp <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
   </div><div className="contact-background" aria-hidden="true">aqui.</div></section>;
 }
 
