@@ -319,8 +319,8 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
 .plus-icon:before,.plus-icon:after{content:'';position:absolute;left:50%;top:50%;width:16px;height:1.5px;background:currentColor;border-radius:2px;transform:translate(-50%,-50%)}
 .plus-icon:after{transform:translate(-50%,-50%) rotate(90deg)}
 .service-row.is-open .expand-symbol{transform:rotate(45deg);background:var(--yellow);color:#171815;border-color:var(--yellow)}
-.service-row.is-open .service-sculpture>span:nth-child(1){transform:translate(-21px,-20px) rotateY(-34deg) rotateX(15deg)}
-.service-row.is-open .service-sculpture>span:nth-child(3){transform:translate(22px,22px) rotateY(-14deg) rotateX(15deg)}
+.service-row.is-open .service-sculpture:not(.growth)>span:nth-child(1){transform:translate(-21px,-20px) rotateY(-34deg) rotateX(15deg)}
+.service-row.is-open .service-sculpture:not(.growth)>span:nth-child(3){transform:translate(22px,22px) rotateY(-14deg) rotateX(15deg)}
 .service-panel .service-content{padding-top:5px}
 
 /* Perguntas frequentes */
@@ -332,8 +332,8 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
 .faq-panel p{margin:0;padding:0 22px 18px 0;font-size:12px;line-height:1.8;color:var(--muted)}
 
 /* Seletor de interesse */
-.interest-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:54px;padding:15px;border:0;background:transparent;text-align:left;cursor:pointer;font-size:14px;line-height:1.5}
-.interest-trigger>span:first-child{min-width:0;overflow-wrap:anywhere}
+.interest-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:46px;padding:11px 14px;border:0;background:transparent;text-align:left;cursor:pointer;font-size:13px;line-height:1.45}
+.interest-trigger>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .interest-picker.is-open .interest-chevron{transform:rotate(225deg)}
 .interest-panel .interest-options{border-top:1px solid #17181526}
 .interest-check .ui-icon{width:18px;height:18px;stroke-width:2.2}
@@ -343,4 +343,37 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
   .service-title{font-size:31px;max-width:240px}
   .interest-trigger{font-size:16px}
   .faq-trigger{padding-block:22px}
+}
+
+/* CTA de diagnóstico e contato compacto. */
+.diagnostic-offer{background:#171815;color:#f4f2eb;border-radius:6px;padding:24px;margin-bottom:25px;box-shadow:0 8px 24px #17181518}
+.diagnostic-kicker{display:block;font-size:8px;font-weight:700;letter-spacing:1.35px;color:#f8c010;margin-bottom:11px}
+.contact-section .diagnostic-title{font-family:var(--font-display),'Arial Narrow',sans-serif;font-size:31px;font-weight:600;line-height:1.05;letter-spacing:-.4px;margin-bottom:10px}
+.diagnostic-offer>p:not(.diagnostic-title){font-size:11px;line-height:1.65;color:#c9cabe;margin-bottom:0}
+.contact-action .diagnostic-offer .button{background:#f8c010;color:#171815;margin:18px 0 0;padding:15px 17px;border-color:#f8c010}
+.contact-action .diagnostic-offer .button:hover{background:#f7d45e;color:#171815}
+.interest-picker{border-radius:4px;background:#fffdf7e8}
+.contact-action .contact-interest-cta{margin-top:17px}
+
+/* Barras alinhadas e movimento ao passar o mouse pela opção aberta. */
+.growth>span:nth-child(1){left:8px}
+.growth>span:nth-child(2){left:46px}
+.growth>span:nth-child(3){left:84px}
+.growth>span{transform:rotateY(-20deg) translateY(0)!important;transition:transform .45s cubic-bezier(.2,.8,.25,1),filter .3s}
+@media(hover:hover) and (pointer:fine){
+  .service-trigger:hover .service-title{color:#9c7100}
+  .service-trigger:hover .expand-symbol{transform:scale(1.08);border-color:var(--ink)}
+  .service-row.is-open .service-trigger:hover .expand-symbol{transform:rotate(45deg) scale(1.08)}
+  .service-row:hover .service-sculpture:not(.growth)>span:nth-child(1){transform:translate(-23px,-22px) rotateY(-40deg)}
+  .service-row:hover .service-sculpture:not(.growth)>span:nth-child(3){transform:translate(24px,24px) rotateY(-10deg)}
+  .service-row:hover .growth>span:nth-child(1){transform:rotateY(-20deg) translateY(-7px)!important}
+  .service-row:hover .growth>span:nth-child(2){transform:rotateY(-20deg) translateY(-13px)!important;transition-delay:.05s}
+  .service-row:hover .growth>span:nth-child(3){transform:rotateY(-20deg) translateY(-19px)!important;transition-delay:.1s}
+}
+
+@media(max-width:760px){
+  .diagnostic-offer{padding:21px 19px;margin-bottom:22px}
+  .contact-section .diagnostic-title{font-size:28px}
+  .contact-action .diagnostic-offer .button{font-size:10px;padding:14px 15px}
+  .interest-trigger{min-height:46px;padding:10px 13px;font-size:14px}
 }

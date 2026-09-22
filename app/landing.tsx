@@ -5,6 +5,7 @@ import { BrandLogo } from './brand-logo';
 import { QuazzLogo } from './quazz-logo';
 import { InterestPicker } from './interest-picker';
 import { ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, MoonIcon, PauseIcon, PlayIcon, SparkIcon, StarIcon, SunIcon } from './ui-icons';
+import { faqItems } from './content';
 
 const whatsapp = 'https://wa.me/5521999888061';
 const googleReview = 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x997fd9270884ef:0x4f13ae1597048f17!12e1?source=g.page.m._&laa=merchant-review-solicitation';
@@ -249,13 +250,7 @@ function ServiceList() {
 
 function Faq() {
   const [openQuestion, setOpenQuestion] = useState<number | null>(null);
-  const questions = [
-    ['Preciso contratar todos os serviços?', 'A conversa começa pela sua necessidade. A agência atua em identidade, presença digital, produção de conteúdo e gestão. O escopo é definido de acordo com o projeto.'],
-    ['Meu negócio está começando. Faz sentido?', 'Sim. O Café da Vila é um exemplo de presença estruturada desde o início, com identidade, Instagram e mini site. Podemos conversar sobre o que precisa vir primeiro na sua empresa.'],
-    ['Vocês também fazem fotos e vídeos?', 'Sim. Produção audiovisual e fotografia fazem parte do trabalho. Formato, quantidade, local e agenda de captação são combinados na proposta.'],
-    ['Como recebo uma proposta?', 'Fale com a equipe pelo WhatsApp. Conte sobre o seu negócio e o que procura para que a Tudo Aqui entenda o projeto e apresente uma proposta.'],
-  ];
-  return <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">05 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list">{questions.map(([question, answer], index) => {
+  return <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">05 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list">{faqItems.map(({ question, answer }, index) => {
     const isOpen = openQuestion === index;
     const panelId = `faq-panel-${index}`;
     return <div className={`faq-item${isOpen ? ' is-open' : ''}`} key={question}><button className="faq-trigger" type="button" aria-expanded={isOpen} aria-controls={panelId} onClick={() => setOpenQuestion(current => current === index ? null : index)}><span>{question}</span><span className="faq-symbol" aria-hidden="true"><span className="plus-icon"/></span></button><div className="disclosure-panel faq-panel" id={panelId} aria-hidden={!isOpen}><div className="disclosure-panel-inner"><p>{answer}</p></div></div></div>;
@@ -281,10 +276,17 @@ function Reviews() {
 
 function Contact() {
   const [interest, setInterest] = useState('Quero entender o que minha marca precisa');
-  const message = `Olá, Tudo Aqui! Conheci o trabalho de vocês pelo site. ${interest}. Vamos conversar?`;
+  const interestMessages: Record<string, string> = {
+    'Quero entender o que minha marca precisa': 'Olá, Tudo Aqui! Vim pelo site e quero entender o que a minha marca precisa neste momento. Podemos conversar sobre os próximos passos?',
+    'Identidade e presença digital': 'Olá, Tudo Aqui! Vim pelo site e quero organizar a identidade e a presença digital da minha marca. Gostaria de contar um pouco sobre o negócio e entender como vocês podem ajudar.',
+    'Fotos, vídeos e conteúdo': 'Olá, Tudo Aqui! Vim pelo site e estou buscando fotos, vídeos e conteúdo com mais direção para o meu negócio. Podemos conversar sobre o projeto?',
+    'Gestão de redes e estratégia': 'Olá, Tudo Aqui! Vim pelo site e quero melhorar a gestão das redes e ter uma estratégia com continuidade. Gostaria de entender como funciona o trabalho de vocês.',
+  };
+  const message = interestMessages[interest] ?? interestMessages['Quero entender o que minha marca precisa'];
+  const diagnosticMessage = 'Olá, Tudo Aqui! Vim pelo site e ganhei um diagnóstico gratuito. Quero analisar a presença digital da minha marca e entender quais devem ser os próximos passos. Como podemos começar?';
   return <section className="contact-section" id="contato"><div className="wrap contact-grid">
     <div><p className="eyebrow">06 / O PRÓXIMO CAPÍTULO</p><h2>Agora, a gente<br/>quer conhecer<br/><span>o seu negócio.</span></h2><p>Conta pra gente o que acontece aí.<br/>Vamos descobrir juntos o próximo passo.</p></div>
-    <div className="contact-action"><InterestPicker value={interest} onChange={setInterest}/><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Vamos conversar no WhatsApp <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
+    <div className="contact-action"><div className="diagnostic-offer"><span className="diagnostic-kicker">UM PRIMEIRO OLHAR, POR NOSSA CONTA</span><p className="diagnostic-title">Você ganhou um diagnóstico gratuito.</p><p>Em uma conversa rápida, a gente olha sua presença digital e aponta os próximos passos.</p><a href={`${whatsapp}?text=${encodeURIComponent(diagnosticMessage)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Quero fazer um diagnóstico gratuito <Arrow/></a></div><InterestPicker value={interest} onChange={setInterest}/><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark contact-interest-cta" target="_blank" rel="noopener noreferrer">Conversar sobre este objetivo <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
   </div><div className="contact-background" aria-hidden="true">aqui.</div></section>;
 }
 
