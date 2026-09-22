@@ -56,7 +56,7 @@ function Controls() {
     window.dispatchEvent(new Event('tam-preferences'));
   }
   return <div className="view-controls">
-    <button className="icon-button motion-toggle" onClick={() => change('motion', paused ? 'on' : 'off')} aria-pressed={paused} aria-label={paused ? 'Retomar animações' : 'Pausar animações'} title={paused ? 'Retomar animações' : 'Pausar animações'}>{paused ? <PlayIcon/> : <PauseIcon/>}</button>
+    <button className="icon-button motion-toggle" onClick={() => change('motion', paused ? 'on' : 'off')} aria-pressed={paused} aria-label={paused ? 'Retomar animações' : 'Pausar animações'} title={paused ? 'Retomar animações' : 'Pausar animações'}>{paused ? <PlayIcon/> : <PauseIcon/>}<span className="motion-toggle-label">{paused ? 'Retomar' : 'Pausar'}</span></button>
     <button className="theme-toggle" onClick={() => change('theme', dark ? 'light' : 'dark')} aria-pressed={dark} aria-label={dark ? 'Mudar para modo claro' : 'Mudar para modo escuro'} title={dark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}><span className="theme-sun" aria-hidden="true"><SunIcon/></span><span className="theme-moon" aria-hidden="true"><MoonIcon/></span><span className="theme-thumb" /></button>
   </div>;
 }
@@ -146,6 +146,7 @@ function HeroCarousel() {
       <div className="photo-corner corner-bottom"/>
       <figcaption>{shot.caption}</figcaption>
     </figure>
+    <p className="hero-mobile-caption">{shot.caption}</p>
     <div className="hero-dots">
       <div className="dot-row">
         {heroShots.map((item, index) => <button
