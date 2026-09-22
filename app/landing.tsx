@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type
 import { BrandLogo } from './brand-logo';
 import { QuazzLogo } from './quazz-logo';
 import { InterestPicker } from './interest-picker';
+import { ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, MoonIcon, PauseIcon, PlayIcon, SparkIcon, StarIcon, SunIcon } from './ui-icons';
 
 const whatsapp = 'https://wa.me/5521999888061';
 const googleReview = 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x997fd9270884ef:0x4f13ae1597048f17!12e1?source=g.page.m._&laa=merchant-review-solicitation';
@@ -54,8 +55,8 @@ function Controls() {
     window.dispatchEvent(new Event('tam-preferences'));
   }
   return <div className="view-controls">
-    <button className="icon-button motion-toggle" onClick={() => change('motion', paused ? 'on' : 'off')} aria-pressed={paused} aria-label={paused ? 'Retomar animações' : 'Pausar animações'} title={paused ? 'Retomar animações' : 'Pausar animações'}><span aria-hidden="true">{paused ? '▷' : 'Ⅱ'}</span></button>
-    <button className="theme-toggle" onClick={() => change('theme', dark ? 'light' : 'dark')} aria-pressed={dark} aria-label="Ativar modo escuro" title={dark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}><span className="theme-sun" aria-hidden="true">☀</span><span className="theme-moon" aria-hidden="true">☾</span><span className="theme-thumb" /></button>
+    <button className="icon-button motion-toggle" onClick={() => change('motion', paused ? 'on' : 'off')} aria-pressed={paused} aria-label={paused ? 'Retomar animações' : 'Pausar animações'} title={paused ? 'Retomar animações' : 'Pausar animações'}>{paused ? <PlayIcon/> : <PauseIcon/>}</button>
+    <button className="theme-toggle" onClick={() => change('theme', dark ? 'light' : 'dark')} aria-pressed={dark} aria-label={dark ? 'Mudar para modo claro' : 'Mudar para modo escuro'} title={dark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}><span className="theme-sun" aria-hidden="true"><SunIcon/></span><span className="theme-moon" aria-hidden="true"><MoonIcon/></span><span className="theme-thumb" /></button>
   </div>;
 }
 
@@ -75,7 +76,7 @@ function Tilt({ children, className = '' }: { children: ReactNode; className?: s
   return <div className={`tilt ${className}`} onPointerMove={move} onPointerLeave={reset}>{children}</div>;
 }
 
-function Arrow() { return <span aria-hidden="true">↗</span>; }
+function Arrow() { return <ArrowUpRightIcon className="arrow-icon"/>; }
 
 function HeroCarousel() {
   const track = useRef<HTMLDivElement>(null);
@@ -124,7 +125,7 @@ function HeroCarousel() {
   }, [paused, held]);
   const shot = heroShots[active] ?? heroShots[0];
   return <div className="hero-stage" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)} onFocusCapture={() => setHeld(true)} onBlurCapture={() => setHeld(false)}>
-    <div className="photo-meta"><span>{shot.label}</span><span>RIO DE JANEIRO ↗</span></div>
+    <div className="photo-meta"><span>{shot.label}</span></div>
     <figure className="hero-photo">
       <div className="hero-track" ref={track} onScroll={measure} tabIndex={0} role="group" aria-label="Fotos dos bastidores da Tudo Aqui, lista rolável na horizontal">
         {loop.map((item, index) => <img
@@ -145,7 +146,6 @@ function HeroCarousel() {
       <figcaption>{shot.caption}</figcaption>
     </figure>
     <div className="hero-dots">
-      <span className="image-disclaimer">Registros de bastidores da Tudo Aqui</span>
       <div className="dot-row">
         {heroShots.map((item, index) => <button
           key={item.src}
@@ -218,8 +218,8 @@ function Rail() {
     <div className="rail-head">
       <p>Arraste para o lado ou use as setas. Seis dos negócios que aparecem no feed da agência.</p>
       <div className="rail-controls">
-        <button type="button" className="rail-button" onClick={() => step(-1)} aria-label="Ver os casos anteriores"><span aria-hidden="true">←</span></button>
-        <button type="button" className="rail-button" onClick={() => step(1)} aria-label="Ver os próximos casos"><span aria-hidden="true">→</span></button>
+        <button type="button" className="rail-button" onClick={() => step(-1)} aria-label="Ver os casos anteriores"><ArrowLeftIcon/></button>
+        <button type="button" className="rail-button" onClick={() => step(1)} aria-label="Ver os próximos casos"><ArrowRightIcon/></button>
       </div>
     </div>
     <div className="rail-track" ref={track} onScroll={measure} onPointerDown={grab} onPointerMove={pull} onPointerUp={release} onPointerCancel={release} tabIndex={0} role="group" aria-label="Casos de clientes, lista rolável na horizontal">
@@ -235,6 +235,33 @@ function Rail() {
   </div>;
 }
 
+function ServiceList() {
+  const [openService, setOpenService] = useState<number | null>(0);
+  return <div className="service-list">{services.map((service, index) => {
+    const isOpen = openService === index;
+    const panelId = `service-panel-${index}`;
+    return <div className={`service-row reveal${isOpen ? ' is-open' : ''}`} key={service.number}>
+      <button className="service-trigger" type="button" aria-expanded={isOpen} aria-controls={panelId} onClick={() => setOpenService(current => current === index ? null : index)}><span className="service-number">{service.number}</span><span className="service-heading"><span className="service-label">{service.label}</span><span className="service-title">{service.title}</span></span><span className="expand-symbol" aria-hidden="true"><span className="plus-icon"/></span></button>
+      <div className="disclosure-panel service-panel" id={panelId} aria-hidden={!isOpen}><div className="disclosure-panel-inner"><div className="service-content"><div className={`service-sculpture ${service.shape}`} aria-hidden="true"><span/><span/><span/></div><div><p>{service.description}</p><ul className="service-tags">{service.items.map(item => <li key={item}>{item}</li>)}</ul><a className="text-link" href={service.link} tabIndex={isOpen ? 0 : -1}>{service.proof} <Arrow/></a></div></div></div></div>
+    </div>;
+  })}</div>;
+}
+
+function Faq() {
+  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
+  const questions = [
+    ['Preciso contratar todos os serviços?', 'A conversa começa pela sua necessidade. A agência atua em identidade, presença digital, produção de conteúdo e gestão. O escopo é definido de acordo com o projeto.'],
+    ['Meu negócio está começando. Faz sentido?', 'Sim. O Café da Vila é um exemplo de presença estruturada desde o início, com identidade, Instagram e mini site. Podemos conversar sobre o que precisa vir primeiro na sua empresa.'],
+    ['Vocês também fazem fotos e vídeos?', 'Sim. Produção audiovisual e fotografia fazem parte do trabalho. Formato, quantidade, local e agenda de captação são combinados na proposta.'],
+    ['Como recebo uma proposta?', 'Fale com a equipe pelo WhatsApp. Conte sobre o seu negócio e o que procura para que a Tudo Aqui entenda o projeto e apresente uma proposta.'],
+  ];
+  return <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">05 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list">{questions.map(([question, answer], index) => {
+    const isOpen = openQuestion === index;
+    const panelId = `faq-panel-${index}`;
+    return <div className={`faq-item${isOpen ? ' is-open' : ''}`} key={question}><button className="faq-trigger" type="button" aria-expanded={isOpen} aria-controls={panelId} onClick={() => setOpenQuestion(current => current === index ? null : index)}><span>{question}</span><span className="faq-symbol" aria-hidden="true"><span className="plus-icon"/></span></button><div className="disclosure-panel faq-panel" id={panelId} aria-hidden={!isOpen}><div className="disclosure-panel-inner"><p>{answer}</p></div></div></div>;
+  })}</div></section>;
+}
+
 function Reviews() {
   return <section className="reviews-section wrap section" id="avaliacoes">
     <div className="section-heading reveal">
@@ -243,7 +270,7 @@ function Reviews() {
     </div>
     <div className="review-list">
       {reviews.map(review => <figure className="review-card reveal" key={review.who}>
-        <p className="review-stars" aria-label="Avaliação de 5 estrelas"><span aria-hidden="true">★★★★★</span></p>
+        <p className="review-stars" aria-label="Avaliação de 5 estrelas"><span aria-hidden="true">{Array.from({length: 5}, (_, index) => <StarIcon key={index}/>)}</span></p>
         <blockquote>{review.text}</blockquote>
         <figcaption><strong>{review.who}</strong><span>{review.from}</span><span className="review-source">{review.when}</span></figcaption>
       </figure>)}
@@ -283,24 +310,24 @@ export default function Landing() {
     <main id="conteudo">
       <section className="hero wrap" aria-labelledby="hero-title" id="inicio">
         <div className="hero-copy"><p className="eyebrow"><span className="status-dot"/> MARKETING PERTO DE QUEM FAZ.</p><h1 id="hero-title">Seu negócio<br/>tem muito<br/>para <span className="highlight">mostrar.</span></h1><p className="hero-description">Da primeira ideia à presença de todo dia.<br/>Estratégia, identidade e conteúdo que colocam<br className="desktop-break"/> a sua história em movimento.</p><a className="button button-dark" href="#servicos">Encontre seu próximo passo <Arrow/></a><div className="hero-footnote"><span className="tiny-line"/> IDEIAS NO PAPEL. SUA MARCA NO MUNDO.</div></div>
-        <Tilt className="hero-art"><div className="art-backplate" aria-hidden="true"/><HeroCarousel/><div className="floating-tag">ESTRATÉGIA + CRIATIVIDADE <Arrow/></div><div className="yellow-note"><span aria-hidden="true">↗</span><p>A gente entra<br/>na sua rotina.<br/><strong>A sua marca<br/>entra em cena.</strong></p></div><div className="cube-scene" aria-hidden="true"><div className="cube"><span className="cube-front"><b>01</b>começar</span><span className="cube-left"><b>02</b>aparecer</span><span className="cube-back"><b>03</b>continuar</span><span className="cube-right">tudo<br/>aqui.</span><span className="cube-top">✳</span><span className="cube-bottom">↗</span></div></div></Tilt>
+        <Tilt className="hero-art"><div className="art-backplate" aria-hidden="true"/><HeroCarousel/><div className="floating-tag">ESTRATÉGIA + CRIATIVIDADE <Arrow/></div><div className="yellow-note"><Arrow/><p>A gente entra<br/>na sua rotina.<br/><strong>A sua marca<br/>entra em cena.</strong></p></div><div className="cube-scene" aria-hidden="true"><div className="cube"><span className="cube-front"><b>01</b>começar</span><span className="cube-left"><b>02</b>aparecer</span><span className="cube-back"><b>03</b>continuar</span><span className="cube-right">tudo<br/>aqui.</span><span className="cube-top"><SparkIcon/></span><span className="cube-bottom"><Arrow/></span></div></div></Tilt>
       </section>
 
-      <section className="client-section wrap reveal" aria-label="Algumas marcas atendidas pela Tudo Aqui"><div className="client-caption"><p>NEGÓCIOS REAIS.<br/><strong>HISTÓRIAS QUE SE ENCONTRAM AQUI.</strong></p><span aria-hidden="true">↘</span></div><div className="client-logos">{clients.map(client => <a className="client-logo" key={client.name} href={`https://www.instagram.com/${client.handle}/`} target="_blank" rel="noopener noreferrer"><img src={client.image} alt={`Logo ${client.name}`} width="82" height="82" loading="lazy"/><span>{client.name}<small>{client.field}</small></span><span className="client-arrow" aria-hidden="true">↗</span></a>)}</div></section>
+      <section className="client-section wrap reveal" aria-label="Algumas marcas atendidas pela Tudo Aqui"><div className="client-caption"><p>NEGÓCIOS REAIS.<br/><strong>HISTÓRIAS QUE SE ENCONTRAM AQUI.</strong></p><ArrowDownRightIcon/></div><div className="client-logos">{clients.map(client => <a className="client-logo" key={client.name} href={`https://www.instagram.com/${client.handle}/`} target="_blank" rel="noopener noreferrer"><img src={client.image} alt={`Logo ${client.name}`} width="82" height="82" loading="lazy"/><span>{client.name}<small>{client.field}</small></span><span className="client-arrow" aria-hidden="true"><Arrow/></span></a>)}</div></section>
 
-      <div className="service-strip" aria-label="Ideia boa, conteúdo com direção e presença de verdade"><div className="marquee-track" aria-hidden="true">{[0,1,2,3,4,5].map(n => <div className="marquee-group" key={n}><span>IDEIA BOA</span><i>✳</i><span>CONTEÚDO COM DIREÇÃO</span><i>✳</i><span>PRESENÇA DE VERDADE</span><i>✳</i><span>TUDO AQUI</span><i>✳</i></div>)}</div></div>
+      <div className="service-strip" aria-label="Ideia boa, conteúdo com direção e presença de verdade"><div className="marquee-track" aria-hidden="true">{[0,1,2,3,4,5].map(n => <div className="marquee-group" key={n}><span>IDEIA BOA</span><SparkIcon/><span>CONTEÚDO COM DIREÇÃO</span><SparkIcon/><span>PRESENÇA DE VERDADE</span><SparkIcon/><span>TUDO AQUI</span><SparkIcon/></div>)}</div></div>
 
-      <section className="services wrap section" id="servicos"><div className="section-heading reveal"><div><p className="eyebrow">01 / O QUE FAZEMOS</p><h2>Cada negócio,<br/><span className="serif-accent">um momento.</span></h2></div><p>Para começar, aparecer ou ter alguém acompanhando. A gente encontra o caminho junto com você.</p></div><div className="service-list">{services.map((service, i) => <details className="service-row reveal" name="services" key={service.number} open={i===0}><summary><span className="service-number">{service.number}</span><div><span className="service-label">{service.label}</span><h3>{service.title}</h3></div><span className="expand-symbol" aria-hidden="true">+</span></summary><div className="service-content"><div className={`service-sculpture ${service.shape}`} aria-hidden="true"><span/><span/><span/></div><div><p>{service.description}</p><ul className="service-tags">{service.items.map(item => <li key={item}>{item}</li>)}</ul><a className="text-link" href={service.link}>{service.proof} <Arrow/></a></div></div></details>)}</div></section>
+      <section className="services wrap section" id="servicos"><div className="section-heading reveal"><div><p className="eyebrow">01 / O QUE FAZEMOS</p><h2>Cada negócio,<br/><span className="serif-accent">um momento.</span></h2></div><p>Para começar, aparecer ou ter alguém acompanhando. A gente encontra o caminho junto com você.</p></div><ServiceList/></section>
 
-      <section className="work-section" id="casos"><div className="wrap section"><div className="section-heading reveal"><div><p className="eyebrow">02 / QUEM ESTÁ COM A GENTE</p><h2>Mais que projetos.<br/><span className="serif-accent">Histórias em comum.</span></h2></div><p>O trabalho ganha sentido quando faz parte da trajetória de quem confia na gente.</p></div><Tilt className="featured-case"><div className="case-number"><span className="eyebrow">CONTEÚDO QUE ABRE CONVERSAS</span><strong>822<span>↗</span></strong><p>cliques para contato em 90 dias</p><span className="case-source">Resultado divulgado em junho de 2026.</span></div><div className="case-story"><div className="case-brand"><img src="/logos/johan.jpg" alt="Logo Johan Veículos" width="64" height="64" loading="lazy"/><span>JOHAN VEÍCULOS<small>ESTRATÉGIA + CONTEÚDO + GESTÃO</small></span></div><h3>Uma parceria<br/>que segue em frente.</h3><p>Conteúdo educativo, produção de vídeos e acompanhamento. Uma relação que ganhou continuidade, com renovações e evolução do plano contratado.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/p/DZclExJFrI1/" target="_blank" rel="noopener noreferrer">Conheça o caso publicado <Arrow/></a></div></Tilt><Rail/><p className="work-footnote">Histórias e dados do levantamento de setembro de 2026. Cliques para contato não equivalem a vendas, e alcance não equivale a faturamento.</p></div></section>
+      <section className="work-section" id="casos"><div className="wrap section"><div className="section-heading reveal"><div><p className="eyebrow">02 / QUEM ESTÁ COM A GENTE</p><h2>Mais que projetos.<br/><span className="serif-accent">Histórias em comum.</span></h2></div><p>O trabalho ganha sentido quando faz parte da trajetória de quem confia na gente.</p></div><Tilt className="featured-case"><div className="case-number"><span className="eyebrow">CONTEÚDO QUE ABRE CONVERSAS</span><strong>822<Arrow/></strong><p>cliques para contato em 90 dias</p><span className="case-source">Resultado divulgado em junho de 2026.</span></div><div className="case-story"><div className="case-brand"><img src="/logos/johan.jpg" alt="Logo Johan Veículos" width="64" height="64" loading="lazy"/><span>JOHAN VEÍCULOS<small>ESTRATÉGIA + CONTEÚDO + GESTÃO</small></span></div><h3>Uma parceria<br/>que segue em frente.</h3><p>Conteúdo educativo, produção de vídeos e acompanhamento. Uma relação que ganhou continuidade, com renovações e evolução do plano contratado.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/p/DZclExJFrI1/" target="_blank" rel="noopener noreferrer">Conheça o caso publicado <Arrow/></a></div></Tilt><Rail/><p className="work-footnote">Histórias e dados do levantamento de setembro de 2026. Cliques para contato não equivalem a vendas, e alcance não equivale a faturamento.</p></div></section>
 
-      <section className="about-section wrap section" id="por-perto"><Tilt className="about-photo"><img src="/images/bastidores.jpg" alt="Registro publicado pela Tudo Aqui na Seven Barber, durante a formalização da parceria" width="900" height="1200" loading="lazy"/><span className="photo-index">NA ROTINA DE QUEM FAZ. ↗</span><span className="about-sticker" aria-hidden="true">gente<br/>com<br/>gente.</span></Tilt><div className="about-copy reveal"><p className="eyebrow">03 / NOSSO JEITO DE TRABALHAR</p><h2>Para contar<br/>sua história,<br/><span className="serif-accent">a gente chega perto.</span></h2><p>Antes do roteiro, tem conversa. Antes da câmera, tem uma ideia. E antes de qualquer estratégia, tem o seu negócio.</p><p>A Tudo Aqui combina planejamento, produção e acompanhamento para construir uma comunicação com a sua cara.</p><ol className="process-list"><li><span>01</span><div><strong>A gente escuta.</strong><p>Entende seu momento e o que você quer construir.</p></div></li><li><span>02</span><div><strong>A gente coloca em movimento.</strong><p>Transforma o plano em identidade, conteúdo e presença.</p></div></li><li><span>03</span><div><strong>A gente acompanha.</strong><p>Conversa sobre o trabalho e ajusta os próximos passos.</p></div></li></ol></div></section>
+      <section className="about-section wrap section" id="por-perto"><Tilt className="about-photo"><img src="/images/bastidores.jpg" alt="Registro publicado pela Tudo Aqui na Seven Barber, durante a formalização da parceria" width="900" height="1200" loading="lazy"/><span className="photo-index">NA ROTINA DE QUEM FAZ. <Arrow/></span><span className="about-sticker" aria-hidden="true">gente<br/>com<br/>gente.</span></Tilt><div className="about-copy reveal"><p className="eyebrow">03 / NOSSO JEITO DE TRABALHAR</p><h2>Para contar<br/>sua história,<br/><span className="serif-accent">a gente chega perto.</span></h2><p>Antes do roteiro, tem conversa. Antes da câmera, tem uma ideia. E antes de qualquer estratégia, tem o seu negócio.</p><p>A Tudo Aqui combina planejamento, produção e acompanhamento para construir uma comunicação com a sua cara.</p><ol className="process-list"><li><span>01</span><div><strong>A gente escuta.</strong><p>Entende seu momento e o que você quer construir.</p></div></li><li><span>02</span><div><strong>A gente coloca em movimento.</strong><p>Transforma o plano em identidade, conteúdo e presença.</p></div></li><li><span>03</span><div><strong>A gente acompanha.</strong><p>Conversa sobre o trabalho e ajusta os próximos passos.</p></div></li></ol></div></section>
 
       <section className="quote-section"><div className="wrap reveal"><span className="quote-mark" aria-hidden="true">“</span><blockquote>Além de trabalhar muito e entregar resultados, deixa o ambiente mais leve, saudável e descontraído.</blockquote><p><strong>Marlon França</strong><span>Johan Veículos · depoimento publicado</span></p></div></section>
 
       <Reviews/>
 
-      <section className="faq-section wrap section"><div className="reveal"><p className="eyebrow">05 / ANTES DA PRIMEIRA CONVERSA</p><h2>Talvez você<br/><span className="serif-accent">esteja pensando…</span></h2></div><div className="faq-list"><details><summary>Preciso contratar todos os serviços?<span aria-hidden="true">+</span></summary><p>A conversa começa pela sua necessidade. A agência atua em identidade, presença digital, produção de conteúdo e gestão. O escopo é definido de acordo com o projeto.</p></details><details><summary>Meu negócio está começando. Faz sentido?<span aria-hidden="true">+</span></summary><p>Sim. O Café da Vila é um exemplo de presença estruturada desde o início, com identidade, Instagram e mini site. Podemos conversar sobre o que precisa vir primeiro na sua empresa.</p></details><details><summary>Vocês também fazem fotos e vídeos?<span aria-hidden="true">+</span></summary><p>Sim. Produção audiovisual e fotografia fazem parte do trabalho. Formato, quantidade, local e agenda de captação são combinados na proposta.</p></details><details><summary>Como recebo uma proposta?<span aria-hidden="true">+</span></summary><p>Fale com a equipe pelo WhatsApp. Conte sobre o seu negócio e o que procura para que a Tudo Aqui entenda o projeto e apresente uma proposta.</p></details></div></section>
+      <Faq/>
 
       <Contact/>
     </main>

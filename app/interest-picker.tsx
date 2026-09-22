@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { CheckIcon } from './ui-icons';
 
 const options = [
   'Quero entender o que minha marca precisa',
@@ -13,13 +14,14 @@ export function InterestPicker({ value, onChange }: {
   value: string;
   onChange: (value: string) => void;
 }) {
-  const disclosure = useRef<HTMLDetailsElement>(null);
-  const trigger = useRef<HTMLElement>(null);
+  const [open, setOpen] = useState(false);
+  const disclosure = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const closeOutside = (event: globalThis.PointerEvent) => {
       if (disclosure.current && event.target instanceof Node && !disclosure.current.contains(event.target)) {
-        disclosure.current.open = false;
+        setOpen(false);
       }
     };
     document.addEventListener('pointerdown', closeOutside);
@@ -27,43 +29,46 @@ export function InterestPicker({ value, onChange }: {
   }, []);
 
   function close() {
-    if (disclosure.current) disclosure.current.open = false;
+    setOpen(false);
     trigger.current?.focus();
   }
 
   return <>
     <span className="interest-label" id="interest-label">POR ONDE VOCÊ QUER COMEÇAR?</span>
-    <details
-      className="interest-picker"
+    <div
+      className={`interest-picker${open ? ' is-open' : ''}`}
       ref={disclosure}
       onBlur={event => {
-        if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}
       onKeyDown={event => {
-        if (event.key === 'Escape' && event.currentTarget.open) {
+        if (event.key === 'Escape' && open) {
           event.preventDefault();
           close();
         }
       }}
     >
-      <summary ref={trigger} aria-labelledby="interest-label interest-value">
+      <button className="interest-trigger" type="button" ref={trigger} aria-expanded={open} aria-controls="interest-options" aria-labelledby="interest-label interest-value" onClick={() => setOpen(current => !current)}>
         <span id="interest-value">{value}</span>
         <span className="interest-chevron" aria-hidden="true" />
-      </summary>
-      <div className="interest-options" role="group" aria-labelledby="interest-label">
-        {options.map(option => <button
-          type="button"
-          key={option}
-          aria-pressed={option === value}
-          onClick={() => {
-            onChange(option);
-            close();
-          }}
-        >
-          <span>{option}</span>
-          <span className="interest-check" aria-hidden="true">{option === value ? '✓' : ''}</span>
-        </button>)}
+      </button>
+      <div className="disclosure-panel interest-panel" id="interest-options" aria-hidden={!open}>
+        <div className="disclosure-panel-inner interest-options" role="group" aria-labelledby="interest-label">
+          {options.map(option => <button
+            type="button"
+            key={option}
+            aria-pressed={option === value}
+            tabIndex={open ? 0 : -1}
+            onClick={() => {
+              onChange(option);
+              close();
+            }}
+          >
+            <span>{option}</span>
+            <span className="interest-check" aria-hidden="true">{option === value && <CheckIcon />}</span>
+          </button>)}
+        </div>
       </div>
-    </details>
+    </div>
   </>;
 }
