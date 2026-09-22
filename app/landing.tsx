@@ -274,6 +274,23 @@ function Reviews() {
   </section>;
 }
 
+function Diagnostic() {
+  const diagnosticMessage = 'Olá, Tudo Aqui! Vim pelo site e ganhei um diagnóstico gratuito. Quero analisar a presença digital da minha marca e entender quais devem ser os próximos passos. Como podemos começar?';
+
+  return <section className="diagnostic-section" aria-labelledby="diagnostic-title">
+    <div className="wrap diagnostic-grid">
+      <div>
+        <p className="eyebrow">UM PRIMEIRO OLHAR, POR NOSSA CONTA</p>
+        <h2 id="diagnostic-title">Você ganhou um<br/><span className="serif-accent">diagnóstico gratuito.</span></h2>
+      </div>
+      <div className="diagnostic-copy">
+        <p>Em uma conversa rápida, a gente olha sua presença digital e aponta os próximos passos para a sua marca.</p>
+        <a href={`${whatsapp}?text=${encodeURIComponent(diagnosticMessage)}`} className="button diagnostic-cta" target="_blank" rel="noopener noreferrer">Quero fazer um diagnóstico gratuito <Arrow/></a>
+      </div>
+    </div>
+  </section>;
+}
+
 function Contact() {
   const [interest, setInterest] = useState('Quero entender o que minha marca precisa');
   const interestMessages: Record<string, string> = {
@@ -283,10 +300,9 @@ function Contact() {
     'Gestão de redes e estratégia': 'Olá, Tudo Aqui! Vim pelo site e quero melhorar a gestão das redes e ter uma estratégia com continuidade. Gostaria de entender como funciona o trabalho de vocês.',
   };
   const message = interestMessages[interest] ?? interestMessages['Quero entender o que minha marca precisa'];
-  const diagnosticMessage = 'Olá, Tudo Aqui! Vim pelo site e ganhei um diagnóstico gratuito. Quero analisar a presença digital da minha marca e entender quais devem ser os próximos passos. Como podemos começar?';
   return <section className="contact-section" id="contato"><div className="wrap contact-grid">
     <div><p className="eyebrow">06 / O PRÓXIMO CAPÍTULO</p><h2>Agora, a gente<br/>quer conhecer<br/><span>o seu negócio.</span></h2><p>Conta pra gente o que acontece aí.<br/>Vamos descobrir juntos o próximo passo.</p></div>
-    <div className="contact-action"><div className="diagnostic-offer"><span className="diagnostic-kicker">UM PRIMEIRO OLHAR, POR NOSSA CONTA</span><p className="diagnostic-title">Você ganhou um diagnóstico gratuito.</p><p>Em uma conversa rápida, a gente olha sua presença digital e aponta os próximos passos.</p><a href={`${whatsapp}?text=${encodeURIComponent(diagnosticMessage)}`} className="button button-dark" target="_blank" rel="noopener noreferrer">Quero fazer um diagnóstico gratuito <Arrow/></a></div><InterestPicker value={interest} onChange={setInterest}/><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark contact-interest-cta" target="_blank" rel="noopener noreferrer">Conversar sobre este objetivo <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
+    <div className="contact-action"><InterestPicker value={interest} onChange={setInterest}/><a href={`${whatsapp}?text=${encodeURIComponent(message)}`} className="button button-dark contact-interest-cta" target="_blank" rel="noopener noreferrer">Conversar sobre este objetivo <Arrow/></a><p>Uma conversa sobre o seu momento.<br/>Sem precisar chegar com tudo resolvido.</p><a className="text-link" href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Ou encontre a gente no Instagram <Arrow/></a></div>
   </div><div className="contact-background" aria-hidden="true">aqui.</div></section>;
 }
 
@@ -330,6 +346,8 @@ export default function Landing() {
       <Reviews/>
 
       <Faq/>
+
+      <Diagnostic/>
 
       <Contact/>
     </main>

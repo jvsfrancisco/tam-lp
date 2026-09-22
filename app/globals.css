@@ -303,7 +303,8 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
 .photo-index .arrow-icon{width:12px;height:12px}
 .review-stars>span{display:flex;gap:3px}
 .review-stars .ui-icon{width:25px;height:25px;fill:currentColor;stroke-width:1}
-.content>span:nth-child(3):after{content:'';display:block;width:0;height:0;border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:20px solid currentColor;margin:auto}
+.content>span:nth-child(3){display:grid;place-items:center}
+.content>span:nth-child(3):after{content:'';display:block;width:0;height:0;border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:20px solid currentColor;margin:0;transform:translateX(2px)}
 
 /* Painéis animados: a grade permite abrir e fechar alturas variáveis sem saltos. */
 .disclosure-panel{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .38s cubic-bezier(.2,.75,.25,1),opacity .24s ease,visibility 0s linear .38s}
@@ -346,13 +347,21 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
 }
 
 /* CTA de diagnóstico e contato compacto. */
-.diagnostic-offer{background:#171815;color:#f4f2eb;border-radius:6px;padding:24px;margin-bottom:25px;box-shadow:0 8px 24px #17181518}
-.diagnostic-kicker{display:block;font-size:8px;font-weight:700;letter-spacing:1.35px;color:#f8c010;margin-bottom:11px}
-.contact-section .diagnostic-title{font-family:var(--font-display),'Arial Narrow',sans-serif;font-size:31px;font-weight:600;line-height:1.05;letter-spacing:-.4px;margin-bottom:10px}
-.diagnostic-offer>p:not(.diagnostic-title){font-size:11px;line-height:1.65;color:#c9cabe;margin-bottom:0}
-.contact-action .diagnostic-offer .button{background:#f8c010;color:#171815;margin:18px 0 0;padding:15px 17px;border-color:#f8c010}
-.contact-action .diagnostic-offer .button:hover{background:#f7d45e;color:#171815}
-.interest-picker{border-radius:4px;background:#fffdf7e8}
+.diagnostic-section{background:var(--inverse);color:var(--inverse-text);border-bottom:1px solid #ffffff1f}
+.diagnostic-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:100px;align-items:end;padding-top:75px;padding-bottom:78px}
+.diagnostic-section .eyebrow{color:var(--yellow);margin-bottom:17px}
+.diagnostic-section h2{font-size:58px;line-height:1.02;letter-spacing:-1px;margin:0}
+.diagnostic-copy{max-width:480px}
+.diagnostic-copy p{color:#c9cabe;font-size:13px;line-height:1.8;margin:0 0 23px}
+.diagnostic-cta{width:100%;background:var(--yellow);color:#171815;border-color:var(--yellow)}
+.diagnostic-cta:hover{background:#f7d45e}
+.interest-picker{border:0;border-bottom:1px solid #171815;background:transparent;border-radius:0}
+.interest-trigger{min-height:30px;padding:2px 4px 5px 0;font-size:12px}
+.interest-panel{display:block;max-height:0;opacity:0;visibility:hidden;overflow:hidden;transition:max-height .34s cubic-bezier(.2,.75,.25,1),opacity .22s ease,visibility 0s linear .34s}
+.interest-picker.is-open>.interest-panel{max-height:260px;opacity:1;visibility:visible;transition-delay:0s}
+.interest-panel .interest-options{margin-top:0;border:1px solid #1718153d;border-radius:4px;background:#fffdf7;box-shadow:0 14px 35px #1718151f;padding:5px}
+.interest-picker.is-open .interest-panel .interest-options{margin-top:7px}
+.interest-options button{min-height:42px;padding:9px 10px;font-size:12px}
 .contact-action .contact-interest-cta{margin-top:17px}
 
 /* Barras alinhadas e movimento ao passar o mouse pela opção aberta. */
@@ -372,8 +381,9 @@ a,button,summary,[role='button']{-webkit-tap-highlight-color:transparent}
 }
 
 @media(max-width:760px){
-  .diagnostic-offer{padding:21px 19px;margin-bottom:22px}
-  .contact-section .diagnostic-title{font-size:28px}
-  .contact-action .diagnostic-offer .button{font-size:10px;padding:14px 15px}
-  .interest-trigger{min-height:46px;padding:10px 13px;font-size:14px}
+  .diagnostic-grid{grid-template-columns:1fr;gap:27px;padding-top:58px;padding-bottom:62px}
+  .diagnostic-section h2{font-size:44px}
+  .diagnostic-copy p{font-size:12px;margin-bottom:20px}
+  .diagnostic-cta{font-size:10px;padding:16px 15px}
+  .interest-trigger{min-height:30px;padding:2px 4px 5px 0;font-size:12px}
 }
