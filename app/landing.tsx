@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type PointerEvent } from 'react';
 import { BrandLogo } from './brand-logo';
-import { QuazzLogo } from './quazz-logo';
+import { QuazzCredit } from './quazz-credit';
 import { InterestPicker } from './interest-picker';
 import { ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, MoonIcon, PauseIcon, PlayIcon, SparkIcon, StarIcon, SunIcon } from './ui-icons';
 import { faqItems } from './content';
@@ -353,6 +353,6 @@ export default function Landing() {
       <Contact/>
     </main>
     <footer className="site-footer wrap"><a className="brand" href="#inicio" aria-label="Tudo Aqui Marketing Digital, voltar ao topo"><BrandLogo className="is-footer"/></a><p>Estratégia. Conteúdo. Gente de verdade.</p><a href="https://www.instagram.com/tudoaqui_marketing/" target="_blank" rel="noopener noreferrer">Instagram <Arrow/></a></footer>
-    <div className="credit wrap"><span>Desenvolvido pela</span><QuazzLogo/></div>
+    <QuazzCredit/>
   </>;
 }

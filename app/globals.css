@@ -186,6 +186,38 @@ body{transition:background-color .3s,color .3s}main{overflow:clip}button{color:i
 .credit{display:flex;align-items:center;justify-content:center;gap:9px;padding-bottom:36px;border-top:1px solid var(--line);padding-top:26px;font-size:11px;letter-spacing:.3px;color:var(--muted)}
 .credit .quazz-logo{height:15px;width:auto;display:block;color:var(--ink);opacity:.85}
 @media(max-width:760px){.credit{padding-top:22px;padding-bottom:30px;font-size:10px}.credit .quazz-logo{height:13px}}
+/* Easter egg do crédito (quazz-credit.tsx), 1,8s: a lâmpada sai do cristal, o cristal
+   cresce e acende em amarelo, a claquete entra pelo lado do nome e dá o take; o grifo
+   passa e o site da Quazz abre. Cores via tokens: segue o tema. */
+.quazz-easter{position:relative;display:block;padding:4px 3px;cursor:pointer}
+.quazz-easter .quazz-logo{position:relative;z-index:1;transition:opacity .22s,transform .22s}
+.quazz-easter:hover .quazz-logo,.quazz-easter:focus-visible .quazz-logo{opacity:1;transform:translateY(-1px)}
+.quazz-crystal{transform-box:fill-box;transform-origin:50% 60%}
+.quazz-clap{position:absolute;right:-4px;top:-17px;z-index:2;width:20px;height:13px;border-radius:2px;background:var(--ink);opacity:0;pointer-events:none;box-shadow:0 3px 8px #0003}
+.quazz-clap:before{content:'';position:absolute;left:3px;right:3px;top:4px;height:4px;border-block:1px solid var(--paper);opacity:.55}
+.quazz-clap-arm{position:absolute;left:0;top:-5px;width:20px;height:4px;border-radius:1px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 3px,var(--ink) 3px 6px);box-shadow:0 0 0 1px var(--ink);transform-origin:1px 100%;transform:rotate(-34deg)}
+.quazz-mark{position:absolute;left:-2px;right:-2px;bottom:3px;z-index:0;height:7px;background:var(--yellow);transform-origin:0 50%;transform:scaleX(0) rotate(-1.5deg);pointer-events:none;--mark-alpha:1;opacity:var(--mark-alpha)}
+[data-theme='dark'] .quazz-mark{--mark-alpha:.4}
+.quazz-bulb{position:absolute;left:9px;top:-25px;z-index:0;width:22px;height:27px;margin-left:-11px;overflow:visible;opacity:0;pointer-events:none;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform-origin:50% 90%}
+.quazz-bulb-glass{fill:transparent}
+.quazz-bulb-rays{stroke:var(--yellow);stroke-width:1.8;opacity:0}
+.quazz-bulb-filament{stroke-width:1.2}
+.quazz-easter.is-rolling .quazz-crystal{animation:quazz-crystal 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-bulb{animation:quazz-bulb 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-bulb-glass{animation:quazz-bulb-glass 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-bulb-rays{animation:quazz-bulb-rays 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-clap{animation:quazz-clap 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-clap-arm{animation:quazz-clap-arm 1.8s ease-in-out}
+.quazz-easter.is-rolling .quazz-mark{animation:quazz-mark 1.8s cubic-bezier(.2,.7,.3,1)}
+.quazz-easter.is-rolling .quazz-logo{animation:quazz-logo-take 1.8s ease-in-out}
+@keyframes quazz-crystal{0%,16%{transform:none;color:var(--ink);filter:none}30%,64%{transform:scale(1.22);color:var(--yellow);filter:drop-shadow(0 0 3px var(--yellow))}80%,to{transform:none;color:var(--ink);filter:none}}
+@keyframes quazz-bulb{0%,3%{opacity:0;transform:translateY(12px) scale(.25)}20%{opacity:1;transform:translateY(0) scale(1);filter:none}32%,86%{opacity:1;transform:translateY(0) scale(1);filter:drop-shadow(0 0 5px var(--yellow))}to{opacity:0;transform:translateY(-2px) scale(1);filter:drop-shadow(0 0 5px var(--yellow))}}
+@keyframes quazz-bulb-glass{0%,28%{fill:transparent}31%{fill:var(--yellow)}34%{fill:transparent}38%,to{fill:var(--yellow)}}
+@keyframes quazz-bulb-rays{0%,34%{opacity:0;transform:scale(.7)}42%,to{opacity:1;transform:scale(1)}}
+@keyframes quazz-clap{0%,36%{opacity:0;transform:translateX(22px)}52%{opacity:1;transform:translateX(0)}82%{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateY(-3px)}}
+@keyframes quazz-clap-arm{0%,52%{transform:rotate(-34deg)}60%{transform:rotate(-42deg)}66%{transform:rotate(0)}70%{transform:rotate(-6deg)}75%,to{transform:rotate(0)}}
+@keyframes quazz-mark{0%,66%{transform:scaleX(0) rotate(-1.5deg);opacity:var(--mark-alpha)}84%,92%{transform:scaleX(1) rotate(-1.5deg);opacity:var(--mark-alpha)}to{transform:scaleX(1) rotate(-1.5deg);opacity:0}}
+@keyframes quazz-logo-take{0%,64%{opacity:.85;transform:none}68%{opacity:1;transform:translateY(-1px) scale(1.05)}80%,92%{opacity:1;transform:none}to{opacity:.85;transform:none}}
 .brand-logo{height:76px;width:auto;display:block}
 .brand-logo .lg-ink{fill:currentColor}
 .brand-logo .lg-brand{fill:var(--yellow)}
